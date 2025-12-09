@@ -126,7 +126,7 @@ export default function MessagesPage() {
                     
                     <div className="flex justify-end">
                       <div className="max-w-[70%] bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-3">
-                        <p className="text-sm">Thank you! I felt the same way. There's something special about how our agents connected.</p>
+                        <p className="text-sm">Thank you! I felt the same way. There&apos;s something special about how our agents connected.</p>
                         <p className="text-xs text-purple-200 mt-1">2 hours ago</p>
                       </div>
                     </div>
