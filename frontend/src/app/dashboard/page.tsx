@@ -47,14 +47,14 @@ export default function DashboardPage() {
   const quickActions = [
     { 
       title: 'Discover Connections', 
-      description: 'Find new potential matches',
+      description: 'Find new people to connect with',
       href: '/discover',
       icon: Sparkles,
       color: 'from-purple-600 to-purple-700'
     },
     { 
-      title: 'View Matches', 
-      description: 'See your mutual connections',
+      title: 'View Connections', 
+      description: 'See your meaningful connections',
       href: '/matches',
       icon: Heart,
       color: 'from-pink-600 to-pink-700'
@@ -67,8 +67,8 @@ export default function DashboardPage() {
       color: 'from-blue-600 to-blue-700'
     },
     { 
-      title: 'Plan Date', 
-      description: 'Schedule your next meetup',
+      title: 'Plan Gathering', 
+      description: 'Schedule playdates, meetups, events',
       href: '/dates',
       icon: Calendar,
       color: 'from-green-600 to-green-700'
@@ -96,7 +96,7 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm mb-1">Total Matches</p>
+                  <p className="text-slate-400 text-sm mb-1">Total Connections</p>
                   <p className="text-3xl font-bold">{stats.matches}</p>
                   <p className="text-xs text-green-400 mt-1 flex items-center">
                     <TrendingUp className="w-3 h-3 mr-1" />
@@ -189,8 +189,8 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Matches</CardTitle>
-              <CardDescription>Your latest connections</CardDescription>
+              <CardTitle>Recent Connections</CardTitle>
+              <CardDescription>Your latest meaningful connections</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -223,7 +223,7 @@ export default function DashboardPage() {
               
               <Link href="/matches">
                 <Button variant="ghost" className="w-full mt-4">
-                  View All Matches
+                  View All Connections
                 </Button>
               </Link>
             </CardContent>
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                       <Badge variant="success">Active</Badge>
                     </div>
                     <p className="text-slate-300 mb-4">
-                      Your personal AI matchmaker is ready to discover meaningful connections for you.
+                      Your personal AI companion is ready to help you find meaningful connections—friendship, community, playdates, music partners, and more.
                     </p>
                     <div className="flex gap-2">
                       <Button variant="secondary" size="sm">

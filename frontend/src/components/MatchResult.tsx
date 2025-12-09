@@ -14,7 +14,7 @@ export function MatchResult({ result }: MatchResultProps) {
         <div className={`text-xl font-semibold ${
           result.matchDecision === 'YES' ? 'text-green-400' : 'text-red-400'
         }`}>
-          {result.matchDecision === 'YES' ? '✨ Match Found!' : 'No Match'}
+          {result.matchDecision === 'YES' ? '✨ Connection Found!' : 'No Connection'}
         </div>
       </div>
 

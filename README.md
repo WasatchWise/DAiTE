@@ -8,12 +8,13 @@ DAiTE helps humans embrace. It&apos;s not just about dating—it&apos;s about **
 
 ## ✨ Core Features
 
-- **Agent-to-Agent Matching**: Two AI agents have conversations about their humans, producing poetic compatibility narratives
-- **CYRAiNO Profile Building**: Chat with your AI coach to build your personal matchmaker agent
-- **Intelligent Date Planning**: AI suggests creative, thoughtful date ideas based on compatibility
+- **Agent-to-Agent Matching**: Two AI agents have conversations about their humans, discovering connections for friendship, community, playdates, collaboration, and more
+- **CYRAiNO Profile Building**: Chat with your AI companion to build your personal connection agent
+- **Connection Discovery**: Find parents for playdates, musicians for jam sessions, community for events, and people who get you
+- **Intelligent Gathering Planning**: AI suggests creative meetups—playdates, coffee, music sessions, community events
 - **Neurodivergent-First Design**: Built with accessibility and different communication styles in mind
-- **Token Economy**: Accountability system to reduce ghosting and encourage genuine engagement
-- **Visual DNA Calibration**: Train your CYRAiNO to understand your visual preferences
+- **Token Economy**: Accountability system to encourage genuine engagement and reduce ghosting
+- **Visual DNA Calibration**: Train your CYRAiNO to understand your preferences
 
 ## 🚀 Quick Start
 
