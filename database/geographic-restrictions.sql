@@ -43,11 +43,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
--- Function to check if user location is allowed
+-- Function to check if user HOME location is allowed
+-- Note: This checks permanent/home location, NOT current/temporary location
+-- Travelers visiting the SLC area can still use DAiTE if their home is outside the radius
 CREATE OR REPLACE FUNCTION is_location_allowed(
     user_country TEXT,
     user_lat DECIMAL DEFAULT NULL,
-    user_lon DECIMAL DEFAULT NULL
+    user_lon DECIMAL DEFAULT NULL,
+    is_home_location BOOLEAN DEFAULT TRUE -- TRUE = home/permanent, FALSE = current/temporary
 ) RETURNS BOOLEAN AS $$
 DECLARE
     slc_lat DECIMAL := 40.7899;
@@ -60,14 +63,20 @@ BEGIN
         RETURN FALSE;
     END IF;
     
-    -- Check 2: If coordinates provided, check distance from SLC
+    -- Check 2: Only validate HOME location, not temporary/travel locations
+    -- If this is a temporary location (is_home_location = FALSE), skip distance check
+    IF NOT is_home_location THEN
+        RETURN TRUE; -- Allow if it's a temporary/travel location
+    END IF;
+    
+    -- Check 3: If HOME coordinates provided, check distance from SLC
     IF user_lat IS NOT NULL AND user_lon IS NOT NULL THEN
         driving_distance_miles := calculate_driving_distance_miles(
             slc_lat, slc_lon,
             user_lat, user_lon
         );
         
-        -- Exclude if within 6-hour driving radius (420 miles)
+        -- Exclude if HOME is within 6-hour driving radius (420 miles)
         IF driving_distance_miles <= six_hours_miles THEN
             RETURN FALSE;
         END IF;
@@ -80,13 +89,34 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Add constraint/trigger to user_profiles table
 -- First, add a computed column or trigger to enforce geographic restrictions
 
+-- Add location_type column to user_profiles if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'user_profiles' 
+        AND column_name = 'location_type'
+    ) THEN
+        ALTER TABLE public.user_profiles 
+        ADD COLUMN location_type TEXT DEFAULT 'home' 
+        CHECK (location_type IN ('home', 'current', 'temporary'));
+        
+        COMMENT ON COLUMN public.user_profiles.location_type IS 'Type of location: home (permanent residence), current (where user currently is), temporary (traveling)';
+    END IF;
+END $$;
+
 -- Create trigger function to validate location on insert/update
 CREATE OR REPLACE FUNCTION validate_user_location()
 RETURNS TRIGGER AS $$
 DECLARE
     location_allowed BOOLEAN;
+    is_home_loc BOOLEAN;
 BEGIN
-    -- Check if location is allowed
+    -- Determine if this is a home location (default to TRUE for backward compatibility)
+    is_home_loc := COALESCE(NEW.location_type, 'home') = 'home';
+    
+    -- Check if location is allowed (only validates home locations strictly)
     location_allowed := is_location_allowed(
         NEW.location_country,
         CASE WHEN NEW.location_coordinates IS NOT NULL 
@@ -96,11 +126,16 @@ BEGIN
         CASE WHEN NEW.location_coordinates IS NOT NULL 
              THEN (NEW.location_coordinates::POINT)[1] -- longitude (X)
              ELSE NULL 
-        END
+        END,
+        is_home_loc
     );
     
     IF NOT location_allowed THEN
-        RAISE EXCEPTION 'Geographic restriction: Users must be in the United States and outside a 6-hour driving radius of Salt Lake City International Airport';
+        IF NOT is_home_loc THEN
+            RAISE EXCEPTION 'Geographic restriction: Current location cannot be set for non-US countries.';
+        ELSE
+            RAISE EXCEPTION 'Geographic restriction: Home location must be in the United States and outside a 6-hour driving radius of Salt Lake City International Airport. Travelers visiting the area can use DAiTE if their home address is outside the restricted zone.';
+        END IF;
     END IF;
     
     RETURN NEW;
@@ -117,26 +152,28 @@ CREATE TRIGGER check_geographic_restrictions
 
 -- Also check on users table if country is stored there
 -- Add helper function for checking during registration
+-- Note: This checks HOME location - travelers can use DAiTE if their home is outside SLC radius
 CREATE OR REPLACE FUNCTION can_user_register(
     country TEXT,
     lat DECIMAL DEFAULT NULL,
-    lon DECIMAL DEFAULT NULL
+    lon DECIMAL DEFAULT NULL,
+    is_home_location BOOLEAN DEFAULT TRUE
 ) RETURNS JSONB AS $$
 DECLARE
     is_allowed BOOLEAN;
     error_message TEXT;
     distance_miles DECIMAL;
 BEGIN
-    is_allowed := is_location_allowed(country, lat, lon);
+    is_allowed := is_location_allowed(country, lat, lon, is_home_location);
     
     IF NOT is_allowed THEN
         -- Determine specific reason
         IF country IS NULL OR UPPER(TRIM(country)) NOT IN ('US', 'USA', 'UNITED STATES', 'UNITED STATES OF AMERICA') THEN
             error_message := 'DAiTE is currently only available to users in the United States.';
-        ELSIF lat IS NOT NULL AND lon IS NOT NULL THEN
+        ELSIF is_home_location AND lat IS NOT NULL AND lon IS NOT NULL THEN
             distance_miles := calculate_driving_distance_miles(40.7899, -111.9791, lat, lon);
             error_message := format(
-                'DAiTE is not available within a 6-hour driving radius of Salt Lake City. Your location is approximately %.1f miles from Salt Lake City International Airport.',
+                'DAiTE is not available for users whose HOME location is within a 6-hour driving radius of Salt Lake City. Your home location is approximately %.1f miles from Salt Lake City International Airport. Note: Travelers visiting the area can use DAiTE if their home address is outside the restricted zone.',
                 distance_miles
             );
         ELSE
@@ -147,11 +184,17 @@ BEGIN
             'allowed', false,
             'error', error_message,
             'country_check', country IS NOT NULL AND UPPER(TRIM(country)) IN ('US', 'USA', 'UNITED STATES', 'UNITED STATES OF AMERICA'),
-            'distance_check', lat IS NULL OR lon IS NULL OR calculate_driving_distance_miles(40.7899, -111.9791, lat, lon) > 420
+            'distance_check', lat IS NULL OR lon IS NULL OR NOT is_home_location OR calculate_driving_distance_miles(40.7899, -111.9791, lat, lon) > 420
         );
     END IF;
     
-    RETURN jsonb_build_object('allowed', true);
+    RETURN jsonb_build_object(
+        'allowed', true,
+        'message', CASE 
+            WHEN NOT is_home_location THEN 'Travel location detected. DAiTE is available for travelers if your home address is outside the restricted zone.'
+            ELSE 'Location validated.'
+        END
+    );
 END;
 $$ LANGUAGE plpgsql;
 
@@ -166,9 +209,10 @@ CREATE TABLE IF NOT EXISTS public.geographic_restrictions (
     longitude DECIMAL,
     city TEXT,
     state TEXT,
+    location_type TEXT DEFAULT 'home' CHECK (location_type IN ('home', 'current', 'temporary')),
     
     -- Restriction check
-    restriction_status TEXT NOT NULL CHECK (restriction_status IN ('allowed', 'blocked_country', 'blocked_radius')),
+    restriction_status TEXT NOT NULL CHECK (restriction_status IN ('allowed', 'blocked_country', 'blocked_radius', 'traveler_allowed')),
     distance_from_slc_miles DECIMAL,
     
     -- Metadata
@@ -195,7 +239,8 @@ USING (auth.jwt() ->> 'role' = 'service_role');
 
 -- Comments
 COMMENT ON FUNCTION calculate_driving_distance_miles IS 'Calculates approximate driving distance in miles between two coordinates using Haversine formula with road distance factor';
-COMMENT ON FUNCTION is_location_allowed IS 'Checks if a user location is allowed: must be in US and outside 6-hour driving radius of Salt Lake City';
-COMMENT ON FUNCTION can_user_register IS 'Validates if a user can register based on geographic restrictions, returns detailed error message';
-COMMENT ON TABLE public.geographic_restrictions IS 'Tracks geographic restriction checks for users';
+COMMENT ON FUNCTION is_location_allowed IS 'Checks if a user HOME location is allowed: must be in US and outside 6-hour driving radius of Salt Lake City. Travelers (temporary locations) are allowed regardless of current location.';
+COMMENT ON FUNCTION can_user_register IS 'Validates if a user can register based on geographic restrictions (checks HOME location, not current/travel location), returns detailed error message';
+COMMENT ON COLUMN public.user_profiles.location_type IS 'Type of location: home (permanent residence - validated), current/temporary (where user is now - not restricted)';
+COMMENT ON TABLE public.geographic_restrictions IS 'Tracks geographic restriction checks for users - validates HOME location, allows travelers';
 

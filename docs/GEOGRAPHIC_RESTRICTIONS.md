@@ -4,8 +4,9 @@
 
 DAiTE has geographic restrictions to ensure platform safety and compliance:
 
-1. **United States Only**: Only users located in the United States can register and use DAiTE
-2. **Salt Lake City Exclusion Zone**: Users within a 6-hour driving radius (approximately 420 miles) of Salt Lake City International Airport are excluded
+1. **United States Only**: Only users with home addresses in the United States can register and use DAiTE
+2. **Salt Lake City Exclusion Zone**: Users whose **HOME location** is within a 6-hour driving radius (approximately 420 miles) of Salt Lake City International Airport are excluded
+3. **Travelers Welcome**: Users traveling through or visiting the SLC area can still use DAiTE if their permanent/home address is outside the restricted zone
 
 ## Implementation
 
@@ -14,10 +15,11 @@ DAiTE has geographic restrictions to ensure platform safety and compliance:
 #### `calculate_driving_distance_miles(lat1, lon1, lat2, lon2)`
 Calculates approximate driving distance between two coordinates using the Haversine formula with a road distance factor (1.3x straight-line distance).
 
-#### `is_location_allowed(country, lat, lon)`
+#### `is_location_allowed(country, lat, lon, is_home_location)`
 Returns `TRUE` if location meets requirements:
 - Country is United States
-- Location is outside 6-hour driving radius of SLC Airport
+- If `is_home_location = TRUE`: HOME location must be outside 6-hour driving radius of SLC Airport
+- If `is_home_location = FALSE`: Travelers/temporary locations are always allowed (if country is US)
 
 #### `can_user_register(country, lat, lon)`
 Returns JSONB with:
@@ -65,17 +67,21 @@ async function checkGeographicRestrictions(country: string, lat?: number, lon?: 
 
 #### Registration Flow
 1. User selects country → Immediate validation if not US
-2. User enters location → Calculate distance from SLC
-3. If within radius → Show error: "DAiTE is not available within a 6-hour driving radius of Salt Lake City. Your location is approximately X miles from Salt Lake City International Airport."
+2. User enters **HOME location** (permanent address) → Calculate distance from SLC
+3. If home within radius → Show error: "DAiTE is not available for users whose HOME location is within a 6-hour driving radius of Salt Lake City. Your home location is approximately X miles from Salt Lake City International Airport. Note: Travelers visiting the area can use DAiTE if their home address is outside the restricted zone."
 4. If outside US → Show error: "DAiTE is currently only available to users in the United States."
+5. **Optional**: User can set current/temporary location for matching (not restricted)
 
 #### Error Messages
 
 **Country Restriction**:
 > "DAiTE is currently only available to users in the United States. We're working on expanding to other countries in the future."
 
-**SLC Radius Restriction**:
-> "DAiTE is not available within a 6-hour driving radius of Salt Lake City. Your location is approximately [X] miles from Salt Lake City International Airport. This restriction is temporary and may be lifted in the future."
+**SLC Radius Restriction (Home Location)**:
+> "DAiTE is not available for users whose HOME location is within a 6-hour driving radius of Salt Lake City. Your home location is approximately [X] miles from Salt Lake City International Airport. Note: Travelers visiting the area can use DAiTE if their home address is outside the restricted zone. This restriction is temporary and may be lifted in the future."
+
+**Traveler Note**:
+> "You're currently in the Salt Lake City area, but your home address is outside the restricted zone. You can use DAiTE! Your current location won't affect your ability to connect."
 
 **Combined**:
 > "DAiTE is currently only available to users in the United States, excluding the Salt Lake City area. Thank you for your interest!"

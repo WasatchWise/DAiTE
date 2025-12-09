@@ -1,9 +1,12 @@
 /**
  * Geographic Validation Service
  * 
- * Validates user location against DAiTE's geographic restrictions:
+ * Validates user HOME location against DAiTE's geographic restrictions:
  * 1. Must be in the United States
- * 2. Must be outside 6-hour driving radius of Salt Lake City International Airport
+ * 2. HOME location must be outside 6-hour driving radius of Salt Lake City International Airport
+ * 
+ * Note: Travelers/visitors to the SLC area can use DAiTE if their home address
+ * is outside the restricted zone. Only HOME/permanent locations are validated.
  */
 
 import { supabase } from '../lib/supabase'
@@ -17,12 +20,17 @@ export interface LocationValidationResult {
 }
 
 /**
- * Check if a location is allowed for DAiTE registration
+ * Check if a HOME location is allowed for DAiTE registration
+ * @param country - Country of HOME address
+ * @param latitude - Latitude of HOME address
+ * @param longitude - Longitude of HOME address
+ * @param isHomeLocation - TRUE for home/permanent address (validated), FALSE for current/travel location (not restricted)
  */
 export async function validateLocation(
   country: string,
   latitude?: number,
-  longitude?: number
+  longitude?: number,
+  isHomeLocation: boolean = true
 ): Promise<LocationValidationResult> {
   if (!supabase) {
     return {
@@ -36,6 +44,7 @@ export async function validateLocation(
       country: country || null,
       lat: latitude || null,
       lon: longitude || null,
+      is_home_location: isHomeLocation,
     })
 
     if (error) {
@@ -88,14 +97,16 @@ export function getLocationErrorMessage(result: LocationValidationResult): strin
 }
 
 /**
- * Validate during registration flow
+ * Validate HOME location during registration flow
+ * Note: This validates permanent/home address, not current/travel location
  */
 export async function validateRegistrationLocation(
   country: string,
   state?: string,
   city?: string,
   latitude?: number,
-  longitude?: number
+  longitude?: number,
+  isHomeLocation: boolean = true
 ): Promise<{ valid: boolean; error?: string }> {
   // First check: Country must be US
   if (!isUSCountry(country)) {
@@ -105,9 +116,10 @@ export async function validateRegistrationLocation(
     }
   }
 
-  // Second check: If coordinates provided, check distance from SLC
-  if (latitude !== undefined && longitude !== undefined) {
-    const result = await validateLocation(country, latitude, longitude)
+  // Second check: If HOME coordinates provided, check distance from SLC
+  // Travel locations (isHomeLocation = false) are not restricted
+  if (isHomeLocation && latitude !== undefined && longitude !== undefined) {
+    const result = await validateLocation(country, latitude, longitude, true)
     if (!result.allowed) {
       return {
         valid: false,
