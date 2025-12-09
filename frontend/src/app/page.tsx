@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { Auth } from '../components/Auth'
 import { Button } from '../components/ui/Button'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Sparkles, Heart, MessageCircle, Zap } from 'lucide-react'
 import { AITransparency } from '../components/AITransparency'
 
@@ -35,9 +36,11 @@ export default function Home() {
               ← Back
             </button>
             <div className="flex items-center justify-center mb-4">
-              <img 
+              <Image 
                 src="/cyraino.png" 
                 alt="CYRAiNO" 
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover mr-4"
               />
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">

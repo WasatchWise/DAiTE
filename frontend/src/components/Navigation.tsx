@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Home, Search, Heart, MessageCircle, Calendar, Settings } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
@@ -24,21 +25,12 @@ export function Navigation() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center space-x-3">
-              <img 
+              <Image 
                 src="/cyraino.png" 
                 alt="CYRAiNO" 
+                width={48}
+                height={48}
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
-                onError={(e) => {
-                  // Fallback to text if image fails to load
-                  e.currentTarget.style.display = 'none'
-                  const parent = e.currentTarget.parentElement
-                  if (parent && !parent.querySelector('.logo-text')) {
-                    const text = document.createElement('div')
-                    text.className = 'logo-text text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent'
-                    text.textContent = 'DAiTE'
-                    parent.appendChild(text)
-                  }
-                }}
               />
               <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 DAiTE
