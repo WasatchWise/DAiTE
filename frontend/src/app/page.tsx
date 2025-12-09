@@ -34,9 +34,16 @@ export default function Home() {
             >
               ← Back
             </button>
-            <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              DAiTE
-            </h1>
+            <div className="flex items-center justify-center mb-4">
+              <img 
+                src="/cyraino.png" 
+                alt="CYRAiNO" 
+                className="w-20 h-20 rounded-full object-cover mr-4"
+              />
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                DAiTE
+              </h1>
+            </div>
             <p className="text-slate-300">Your Personal CYRAiNO</p>
           </div>
           <Auth />

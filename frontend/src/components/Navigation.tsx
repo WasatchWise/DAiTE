@@ -23,7 +23,23 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center space-x-2">
+            <Link href="/dashboard" className="flex items-center space-x-3">
+              <img 
+                src="/cyraino.png" 
+                alt="CYRAiNO" 
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                onError={(e) => {
+                  // Fallback to text if image fails to load
+                  e.currentTarget.style.display = 'none'
+                  const parent = e.currentTarget.parentElement
+                  if (parent && !parent.querySelector('.logo-text')) {
+                    const text = document.createElement('div')
+                    text.className = 'logo-text text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent'
+                    text.textContent = 'DAiTE'
+                    parent.appendChild(text)
+                  }
+                }}
+              />
               <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 DAiTE
               </div>
