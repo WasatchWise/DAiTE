@@ -72,7 +72,7 @@ export function AITransparency({ variant = 'compact', className = '' }: AITransp
               <Zap className="w-5 h-5 text-slate-300" />
             </div>
             <div>
-              <h4 className="font-semibold mb-1">You're in Control</h4>
+              <h4 className="font-semibold mb-1">You&apos;re in Control</h4>
               <p className="text-sm text-slate-400">
                 Your CYRAiNO reflects you—you shape it, you control it, you can change it anytime. AI suggests connections, but your judgment matters more than AI certainty. If something feels off, tell us.
               </p>
@@ -82,7 +82,7 @@ export function AITransparency({ variant = 'compact', className = '' }: AITransp
 
         <div className="mt-6 pt-4 border-t border-slate-700">
           <p className="text-xs text-slate-500 italic">
-            AI isn't perfect, and that's okay. Your authenticity comes from you, not from AI. CYRAiNO just helps you express it and discover connections that might matter.
+            AI isn&apos;t perfect, and that&apos;s okay. Your authenticity comes from you, not from AI. CYRAiNO just helps you express it and discover connections that might matter.
           </p>
         </div>
       </CardContent>
