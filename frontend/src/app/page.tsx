@@ -304,8 +304,27 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* Philosophy */}
+      {/* CYRAiNO Origin */}
       <section className="py-12 sm:py-24 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12">
+            <span className="text-xs sm:text-sm uppercase tracking-widest text-rose-400">The Name</span>
+            <h2 className="text-3xl sm:text-4xl font-light mt-3 sm:mt-4">Why CYRAiNO</h2>
+          </div>
+          
+          <div className="space-y-6 text-stone-400 font-light leading-relaxed">
+            <p className="text-base sm:text-lg max-w-3xl mx-auto px-2">
+              Cyrano de Bergerac was a poet who wrote beautiful love letters on behalf of others—eloquent, authentic, speaking what needed to be said even when he couldn&apos;t speak it for himself.
+            </p>
+            <p className="text-base sm:text-lg max-w-3xl mx-auto px-2">
+              Your CYRAiNO does the same: it learns who you are and advocates for you, articulating your values and finding connections that align with what matters to you. Like the poet, it speaks on your behalf—but the connection, the embrace, happens between you and other people.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy */}
+      <section className="py-12 sm:py-24 px-4 sm:px-6 bg-stone-900/30">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-3xl sm:text-4xl md:text-5xl font-light leading-tight sm:leading-relaxed px-2">
             <span className="text-white">AI facilitates.</span>
