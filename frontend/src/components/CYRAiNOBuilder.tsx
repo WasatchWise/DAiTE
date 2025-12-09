@@ -83,7 +83,7 @@ export function CYRAiNOBuilder({ onComplete }: CYRAiNOBuilderProps) {
       <div className="mb-6">
         <h2 className="text-3xl font-bold mb-2">Create Your CYRAiNO</h2>
         <p className="text-slate-400">
-          Your personal AI matchmaker. Let&apos;s build its personality.
+          Your personal AI companion. Let&apos;s build its personality so it can help you find the connections you&apos;re looking for.
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export function CYRAiNOBuilder({ onComplete }: CYRAiNOBuilderProps) {
             onChange={(e) => setAgent({ ...agent, persona: e.target.value })}
             rows={4}
             className="w-full px-4 py-2 bg-slate-700 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-            placeholder="e.g., A thoughtful philosopher who values deep conversations and authenticity..."
+            placeholder="e.g., A thoughtful parent who values authentic friendships and community, or a musician seeking creative collaboration..."
           />
         </div>
 

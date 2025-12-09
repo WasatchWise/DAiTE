@@ -1,7 +1,7 @@
 {
-  "name": "DAiTE - Your Personal CYRAiNO",
+  "name": "DAiTE - Helping Humans Embrace",
   "short_name": "DAiTE",
-  "description": "Where connections have depth, not just data. AI-powered matchmaking through agent-to-agent conversations.",
+  "description": "Find meaningful connections—friendship, community, playdates, music partners, and more. Your personal AI companion helps you discover the people who matter.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fce7f3",
@@ -21,7 +21,7 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["social", "dating", "lifestyle"],
+  "categories": ["social", "lifestyle", "community"],
   "screenshots": [],
   "shortcuts": [
     {

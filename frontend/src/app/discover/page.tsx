@@ -52,7 +52,7 @@ export default function DiscoverPage() {
             Discover Connections
           </h1>
           <p className="text-slate-400">
-            Let CYRAiNO find meaningful connections for you
+            Find your people—friends, playdates, music partners, community, and more
           </p>
         </div>
 

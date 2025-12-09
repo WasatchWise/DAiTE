@@ -1,10 +1,10 @@
-# DAiTE - Your Personal CYRAiNO
+# DAiTE - Helping Humans Embrace
 
-> A social healing platform that uses AI agents to help humans connect in meaningful ways.
+> A social connection platform that uses AI agents to help humans embrace meaningful connections—all kinds of connections.
 
 ## 🎯 Vision
 
-DAiTE is not just a dating app—it's a **social operating system** that uses AI agents (CYRAiNOs) to facilitate deeper, more authentic connections across dating, friendship, community, and professional networking.
+DAiTE helps humans embrace. It&apos;s not just about dating—it&apos;s about **finding your people**. Whether you&apos;re a parent seeking playdates, a musician finding collaborators, a single dad looking for community, or someone building post-COVID connections, DAiTE uses AI agents (CYRAiNOs) to facilitate deeper, more authentic relationships across friendship, community, collaboration, support, and romantic connections.
 
 ## ✨ Core Features
 

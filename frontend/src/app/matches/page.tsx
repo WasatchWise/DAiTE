@@ -55,10 +55,10 @@ export default function MatchesPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Your Matches
+            Your Connections
           </h1>
           <p className="text-slate-400">
-            Connections discovered through CYRAiNO conversations
+            Meaningful connections discovered through CYRAiNO conversations
           </p>
         </div>
 

@@ -4,8 +4,8 @@ import { PWAInstaller } from '../components/PWAInstaller'
 import './sw-register'
 
 export const metadata: Metadata = {
-  title: 'DAiTE - Your Personal CYRAiNO',
-  description: 'Where connections have depth, not just data. AI-powered matchmaking through agent-to-agent conversations.',
+  title: 'DAiTE - Helping Humans Embrace',
+  description: 'Find meaningful connections—friendship, community, playdates, music partners, and more. Your personal AI companion CYRAiNO helps you discover the people who matter.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'DAiTE',
-    title: 'DAiTE - Your Personal CYRAiNO',
-    description: 'Where connections have depth, not just data.',
+    title: 'DAiTE - Helping Humans Embrace',
+    description: 'Find meaningful connections—friendship, community, playdates, and more.',
   },
   twitter: {
     card: 'summary',
-    title: 'DAiTE - Your Personal CYRAiNO',
-    description: 'Where connections have depth, not just data.',
+    title: 'DAiTE - Helping Humans Embrace',
+    description: 'Find meaningful connections—friendship, community, playdates, and more.',
   },
 }
 

@@ -54,14 +54,12 @@ export default function Home() {
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 px-4">
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
-                Where connections have depth,
+                Helping humans embrace.
               </span>
-              <br />
-              <span className="text-white">not just data.</span>
             </h1>
             
             <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto px-4">
-              Instead of swiping through profiles, create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI matchmaker that discovers meaningful connections through conversation.
+              Create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI companion that discovers meaningful connections. Whether you&apos;re a parent seeking playdates, a musician finding your people, or someone building community, CYRAiNO helps you find the connections that matter.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -90,7 +88,7 @@ export default function Home() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">How DAiTE Works</h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            A different approach to finding meaningful connections
+            A different approach to finding meaningful connections—all kinds of connections
           </p>
         </div>
 
@@ -101,7 +99,7 @@ export default function Home() {
             </div>
             <h3 className="text-2xl font-bold mb-3">1. Create Your CYRAiNO</h3>
             <p className="text-slate-400">
-              Build your personal AI matchmaker by sharing your values, interests, and what makes you unique.
+              Build your personal AI companion by sharing who you are—your values, interests, and what you&apos;re looking for. Whether it&apos;s friendship, community, or connection.
             </p>
           </div>
 
@@ -111,7 +109,7 @@ export default function Home() {
             </div>
             <h3 className="text-2xl font-bold mb-3">2. Agents Have Conversations</h3>
             <p className="text-slate-400">
-              Your CYRAiNO talks with other agents, discovering compatibility through actual dialogue—not algorithms.
+              Your CYRAiNO talks with other agents, discovering compatibility through real dialogue. No algorithms, just authentic conversation about what matters.
             </p>
           </div>
 
@@ -119,10 +117,33 @@ export default function Home() {
             <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Heart className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold mb-3">3. Receive Poetic Matches</h3>
+            <h3 className="text-2xl font-bold mb-3">3. Discover Connections</h3>
             <p className="text-slate-400">
-              When connections resonate, you get a beautiful narrative explaining why this person might change your life.
+              When connections resonate, you get a beautiful narrative explaining why this person matters. From playdates to music sessions, community events to deep friendships.
             </p>
+          </div>
+        </div>
+
+        {/* Connection Types */}
+        <div className="mt-16 text-center">
+          <h3 className="text-2xl font-bold mb-6">Find Your People</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
+              <p className="text-purple-400 font-semibold">Parents</p>
+              <p className="text-sm text-slate-400">Playdates & community</p>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
+              <p className="text-pink-400 font-semibold">Musicians</p>
+              <p className="text-sm text-slate-400">Jam sessions & collaboration</p>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
+              <p className="text-purple-400 font-semibold">Community</p>
+              <p className="text-sm text-slate-400">Events & gatherings</p>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
+              <p className="text-pink-400 font-semibold">Connection</p>
+              <p className="text-sm text-slate-400">Friendship & more</p>
+            </div>
           </div>
         </div>
       </div>
@@ -131,10 +152,10 @@ export default function Home() {
       <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 py-16">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold mb-4">
-            Ready to find deeper connections?
+            Ready to find your people?
           </h2>
           <p className="text-xl text-slate-300 mb-8">
-            Join DAiTE and experience dating reimagined through agent-to-agent matching.
+            Join DAiTE and discover connections that matter—whether you&apos;re seeking friendship, community, playdates, or something more. Helping humans embrace, one connection at a time.
           </p>
           <Button
             variant="primary"
@@ -152,7 +173,7 @@ export default function Home() {
       <footer className="border-t border-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center text-slate-400">
-            <p>© 2025 DAiTE. Where connections have depth, not just data.</p>
+            <p>© 2025 DAiTE. Helping humans embrace.</p>
           </div>
         </div>
       </footer>

@@ -38,7 +38,7 @@ export async function simulateAgentDialogue(
   }
 
   const prompt = `
-You are facilitating a "vibe check" conversation between two users' personal CYRAiNO agents.
+You are facilitating a "vibe check" conversation between two users' personal CYRAiNO agents. DAiTE is a social connection platform for all kinds of relationships: friendship, community, playdates, music collaboration, support groups, and romantic connections. The goal is helping humans embrace meaningful connections of all types.
 
 Agent A (${agentA.name}):
 - Persona: ${agentA.persona}
@@ -53,11 +53,11 @@ Agent B (${agentB.name}):
 - Communication Style: ${agentB.communicationStyle}
 
 Instructions:
-1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' compatibility.
+1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' potential for connection. This could be friendship, community, collaboration, playdates, support, or romantic—whatever makes sense.
 2. Provide a brief summary of their interaction and perceived compatibility.
 3. Provide a compatibilityScore (0-100).
 4. Provide a matchDecision ("YES" or "NO").
-5. If matchDecision is "YES", provide a beautiful, poetic narrative (2-3 sentences) explaining why these two humans would connect. This should give readers "chills" - be specific, warm, and insightful.
+5. If matchDecision is "YES", provide a beautiful, poetic narrative (2-3 sentences) explaining why these two humans would connect. This should give readers "chills" - be specific, warm, and insightful about the type of connection and why it matters.
 
 Format as JSON:
 {

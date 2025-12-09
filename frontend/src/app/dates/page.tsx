@@ -11,7 +11,7 @@ const mockDates = [
     id: '1',
     matchName: 'Alex',
     title: 'Coffee & Conversation',
-    description: 'A cozy morning chat at our favorite local cafe, discussing philosophy and life.',
+    description: 'A cozy morning chat at our favorite local cafe, discussing life and building friendship.',
     date: '2025-01-20',
     time: '10:00 AM',
     location: 'The Philosopher\'s Café, Downtown',
@@ -21,11 +21,11 @@ const mockDates = [
   {
     id: '2',
     matchName: 'Jordan',
-    title: 'Art Gallery Walk',
-    description: 'Explore the local art scene and discover new perspectives together.',
+    title: 'Park Playdate',
+    description: 'Kids play while we chat and build community. Perfect for connecting as parents.',
     date: '2025-01-22',
     time: '2:00 PM',
-    location: 'Metropolitan Art Gallery',
+    location: 'Riverside Park Playground',
     status: 'pending',
     suggestedBy: 'You'
   },
@@ -43,9 +43,14 @@ const dateIdeas = [
     compatibility: 92
   },
   {
-    title: 'Cooking Class',
-    description: 'Learn to make pasta from scratch, interactive and fun',
+    title: 'Park Playdate',
+    description: 'Kids play while parents connect and chat',
     compatibility: 88
+  },
+  {
+    title: 'Music Jam Session',
+    description: 'Bring instruments, create together, build musical friendship',
+    compatibility: 90
   },
 ]
 
@@ -58,16 +63,16 @@ export default function DatesPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Plan Your Dates
+            Plan Your Gatherings
           </h1>
           <p className="text-slate-400">
-            Let CYRAiNO help you plan meaningful experiences
+            Let CYRAiNO help you plan meaningful experiences—playdates, jam sessions, coffee, events, and more
           </p>
         </div>
 
         {/* Upcoming Dates */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Upcoming Dates</h2>
+          <h2 className="text-2xl font-bold mb-4">Upcoming Gatherings</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {mockDates.map((date) => (
               <Card key={date.id} hover>
@@ -123,7 +128,7 @@ export default function DatesPage() {
         {/* AI Date Suggestions */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold">AI Date Suggestions</h2>
+            <h2 className="text-2xl font-bold">AI Gathering Suggestions</h2>
             <Badge variant="info" className="flex items-center">
               <Sparkles className="w-3 h-3 mr-1" />
               Powered by CYRAiNO
@@ -143,7 +148,7 @@ export default function DatesPage() {
                   
                   <div className="flex gap-2">
                     <Button variant="primary" size="sm" className="flex-1">
-                      Plan This Date
+                      Plan This Gathering
                     </Button>
                     <Button variant="ghost" size="sm">
                       View Details
