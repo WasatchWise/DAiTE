@@ -59,10 +59,35 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
+        {/* Cherry Blossom Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
+        <div className="absolute top-10 left-10 w-32 h-32 bg-pink-300/10 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute top-40 right-20 w-24 h-24 bg-purple-300/10 rounded-full blur-xl animate-pulse delay-300" />
+        <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-pink-400/10 rounded-full blur-lg animate-pulse delay-700" />
+        {/* Floating Cherry Blossom Petals */}
+        <div className="absolute top-1/4 left-1/4 text-3xl opacity-20 animate-float-petal">🌸</div>
+        <div className="absolute top-1/3 right-1/4 text-2xl opacity-15 animate-float-petal delay-300">🌸</div>
+        <div className="absolute bottom-1/3 left-1/3 text-2xl opacity-20 animate-float-petal delay-700">🌸</div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="text-center">
+            {/* CYRAiNO Logo - Prominently Displayed */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="relative">
+                <Image 
+                  src="/cyraino.png" 
+                  alt="CYRAiNO" 
+                  width={120}
+                  height={120}
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover ring-4 ring-pink-300/30 shadow-2xl shadow-pink-500/20"
+                />
+                {/* Cherry Blossom Petal Decorations */}
+                <div className="absolute -top-2 -left-2 w-4 h-4 bg-pink-300/40 rounded-full blur-sm animate-pulse" />
+                <div className="absolute -top-1 -right-3 w-3 h-3 bg-purple-300/40 rounded-full blur-sm animate-pulse delay-300" />
+                <div className="absolute -bottom-2 -left-1 w-3 h-3 bg-pink-400/40 rounded-full blur-sm animate-pulse delay-700" />
+              </div>
+            </div>
+            
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 px-4">
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
                 Helping humans embrace.
@@ -104,8 +129,10 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center relative">
+            {/* Cherry Blossom Petal Decoration */}
+            <div className="absolute -top-2 right-4 text-2xl opacity-30 animate-pulse">🌸</div>
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/30">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-3">1. Create Your CYRAiNO</h3>
@@ -114,8 +141,10 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center relative">
+            {/* Cherry Blossom Petal Decoration */}
+            <div className="absolute -top-2 left-4 text-2xl opacity-30 animate-pulse delay-300">🌸</div>
+            <div className="w-16 h-16 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30">
               <MessageCircle className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-3">2. Agents Have Conversations</h3>
@@ -124,8 +153,10 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center relative">
+            {/* Cherry Blossom Petal Decoration */}
+            <div className="absolute -top-2 right-4 text-2xl opacity-30 animate-pulse delay-700">🌸</div>
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/30">
               <Heart className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-3">3. Discover Connections</h3>
