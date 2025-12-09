@@ -59,7 +59,7 @@ export default function Home() {
             </h1>
             
             <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto px-4">
-              Create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI companion that discovers meaningful connections. Whether you&apos;re a parent seeking playdates, a musician finding your people, or someone building community, CYRAiNO helps you find the connections that matter.
+              Create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI companion that discovers meaningful connections. Don&apos;t let another day pass without finding your people: the playdates you need, the music partners you&apos;re missing, the community that&apos;s waiting for you.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

@@ -54,10 +54,18 @@ Agent B (${agentB.name}):
 
 Instructions:
 1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' potential for connection. This could be friendship, community, collaboration, playdates, support, or romantic—whatever makes sense.
+
 2. Provide a brief summary of their interaction and perceived compatibility.
+
 3. Provide a compatibilityScore (0-100).
+
 4. Provide a matchDecision ("YES" or "NO").
-5. If matchDecision is "YES", provide a beautiful, poetic narrative (2-3 sentences) explaining why these two humans would connect. This should give readers "chills" - be specific, warm, and insightful about the type of connection and why it matters.
+
+5. If matchDecision is "YES", provide a narrative that combines:
+   - **Emotional resonance (System 1)**: A beautiful, poetic explanation (2-3 sentences) that gives readers "chills" - specific, warm, and insightful about the type of connection and why it matters. Frame it to trigger emotional recognition: "This person gets you" or "This connection aligns with who you are."
+   - **Rational justification (System 2)**: Include 2-3 concrete, shareable reasons that help justify the connection. Focus on specific shared values, compatible lifestyles, mutual interests, or identity alignment (e.g., "Both are parents who see themselves as community builders" or "Both musicians seeking authentic collaboration"). These reasons should help the user explain to themselves and others why this connection makes sense.
+
+The narrative should address identity alignment (Self-Congruity Theory) - how this connection reflects their actual self, ideal self, or social self. Use framing that helps users see what they might miss by not connecting (loss aversion), while celebrating what they gain (positive framing).
 
 Format as JSON:
 {
@@ -65,7 +73,7 @@ Format as JSON:
   "summary": "...",
   "compatibilityScore": 85,
   "matchDecision": "YES",
-  "narrative": "Your beautiful explanation here..."
+  "narrative": "Your combined emotional + rational explanation here. First paragraph: poetic, emotional resonance. Second paragraph: concrete justification points that help validate the connection choice."
 }
 `
 

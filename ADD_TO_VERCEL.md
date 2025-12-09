@@ -10,16 +10,18 @@
 2. **Add Variable 1: Supabase URL**
    ```
    Name: NEXT_PUBLIC_SUPABASE_URL
-   Value: https://ovjkwegrubzhcdgtjqvr.supabase.co
+   Value: https://YOUR_PROJECT_REF.supabase.co
    Environments: ✅ Production, ✅ Preview, ✅ Development
    ```
+   > Get this from: Supabase Dashboard → Settings → API → Project URL
 
 3. **Add Variable 2: Supabase Anon Key**
    ```
    Name: NEXT_PUBLIC_SUPABASE_ANON_KEY
-   Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92amt3ZWdydWJ6aGNkZ3RqcXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyMzQ0OTcsImV4cCI6MjA2ODgxMDQ5N30.zmD8i2hIjGzBuHYIwkwQYbgNL8twpDSCcHq_4muElxQ
+   Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI...
    Environments: ✅ Production, ✅ Preview, ✅ Development
    ```
+   > Get this from: Supabase Dashboard → Settings → API → anon public key
 
 4. **Save and Redeploy**
    - Click **Save** for each variable

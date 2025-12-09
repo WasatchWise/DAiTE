@@ -19,24 +19,24 @@ SELECT * FROM daite_users;
 CREATE TABLE IF NOT EXISTS migration_backup_cyraino_agents AS 
 SELECT * FROM cyraino_agents;
 
--- Backup other tables (if they have data)
-CREATE TABLE IF NOT EXISTS migration_backup_user_connections AS 
-SELECT * FROM user_connections WHERE EXISTS (SELECT 1 FROM user_connections LIMIT 1);
+-- Backup other tables (these will fail silently if source tables don't exist)
+CREATE TABLE IF NOT EXISTS migration_backup_user_connections AS
+SELECT * FROM user_connections;
 
-CREATE TABLE IF NOT EXISTS migration_backup_agent_dialogues AS 
-SELECT * FROM agent_dialogues WHERE EXISTS (SELECT 1 FROM agent_dialogues LIMIT 1);
+CREATE TABLE IF NOT EXISTS migration_backup_agent_dialogues AS
+SELECT * FROM agent_dialogues;
 
-CREATE TABLE IF NOT EXISTS migration_backup_planned_meetups AS 
-SELECT * FROM planned_meetups WHERE EXISTS (SELECT 1 FROM planned_meetups LIMIT 1);
+CREATE TABLE IF NOT EXISTS migration_backup_planned_meetups AS
+SELECT * FROM planned_meetups;
 
-CREATE TABLE IF NOT EXISTS migration_backup_user_traits AS 
-SELECT * FROM user_traits WHERE EXISTS (SELECT 1 FROM user_traits LIMIT 1);
+CREATE TABLE IF NOT EXISTS migration_backup_user_traits AS
+SELECT * FROM user_traits;
 
-CREATE TABLE IF NOT EXISTS migration_backup_token_transactions AS 
-SELECT * FROM token_transactions WHERE EXISTS (SELECT 1 FROM token_transactions LIMIT 1);
+CREATE TABLE IF NOT EXISTS migration_backup_token_transactions AS
+SELECT * FROM token_transactions;
 
-CREATE TABLE IF NOT EXISTS migration_backup_connection_feedback AS 
-SELECT * FROM connection_feedback WHERE EXISTS (SELECT 1 FROM connection_feedback LIMIT 1);
+CREATE TABLE IF NOT EXISTS migration_backup_connection_feedback AS
+SELECT * FROM connection_feedback;
 
 -- STEP 2: Rename existing tables (so schema.sql can create new ones)
 -- ============================================================================
