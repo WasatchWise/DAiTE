@@ -79,14 +79,17 @@ async function checkDatabase() {
       
       // Check for extensions
       console.log('\n🔌 Checking Extensions:\n')
-      const { data: extensions, error: extError } = await supabase
-        .rpc('check_extensions')
-        .catch(() => ({ data: null, error: null }))
-      
-      if (extError) {
+      try {
+        const { data: extensions, error: extError } = await supabase
+          .rpc('check_extensions')
+        
+        if (extError) {
+          console.log('   (Could not check extensions - this is okay)')
+        } else {
+          console.log('   Extensions check skipped (requires direct DB access)')
+        }
+      } catch (err) {
         console.log('   (Could not check extensions - this is okay)')
-      } else {
-        console.log('   Extensions check skipped (requires direct DB access)')
       }
       
       console.log('\n✨ Database is ready for use!')
