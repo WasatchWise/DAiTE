@@ -1,0 +1,162 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { Auth } from '../components/Auth'
+import { Button } from '../components/ui/Button'
+import Link from 'next/link'
+import { ArrowRight, Sparkles, Heart, MessageCircle, Zap } from 'lucide-react'
+
+export default function Home() {
+  const [user, setUser] = useState<any>(null)
+  const [showAuth, setShowAuth] = useState(false)
+
+  useEffect(() => {
+    if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setUser(session.user)
+          window.location.href = '/dashboard'
+        }
+      })
+    }
+  }, [])
+
+  if (showAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <button
+              onClick={() => setShowAuth(false)}
+              className="text-slate-400 hover:text-white mb-4"
+            >
+              ← Back
+            </button>
+            <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              DAiTE
+            </h1>
+            <p className="text-slate-300">Your Personal CYRAiNO</p>
+          </div>
+          <Auth />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 px-4">
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
+                Where connections have depth,
+              </span>
+              <br />
+              <span className="text-white">not just data.</span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto px-4">
+              Instead of swiping through profiles, create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI matchmaker that discovers meaningful connections through conversation.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => setShowAuth(true)}
+                className="text-lg px-8 py-4"
+              >
+                Get Started
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              
+              <Link href="#how-it-works">
+                <Button variant="ghost" size="lg" className="text-lg px-8 py-4">
+                  Learn More
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works */}
+      <div id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">How DAiTE Works</h2>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+            A different approach to finding meaningful connections
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">1. Create Your CYRAiNO</h3>
+            <p className="text-slate-400">
+              Build your personal AI matchmaker by sharing your values, interests, and what makes you unique.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">2. Agents Have Conversations</h3>
+            <p className="text-slate-400">
+              Your CYRAiNO talks with other agents, discovering compatibility through actual dialogue—not algorithms.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Heart className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">3. Receive Poetic Matches</h3>
+            <p className="text-slate-400">
+              When connections resonate, you get a beautiful narrative explaining why this person might change your life.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 py-16">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold mb-4">
+            Ready to find deeper connections?
+          </h2>
+          <p className="text-xl text-slate-300 mb-8">
+            Join DAiTE and experience dating reimagined through agent-to-agent matching.
+          </p>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => setShowAuth(true)}
+            className="text-lg px-8 py-4"
+          >
+            Create Your CYRAiNO
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-slate-400">
+            <p>© 2025 DAiTE. Where connections have depth, not just data.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
