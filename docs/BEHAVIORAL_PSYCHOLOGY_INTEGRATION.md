@@ -16,11 +16,11 @@
 
 **Key Insight**: Prospect Theory shows loss feels 2-2.5x stronger than equivalent gain.
 
-**Application to DAiTE**:
-- Frame **not connecting** as a loss: "Missing out on finding your people"
-- Frame **status quo** (loneliness, isolation, post-COVID disconnect) as painful
-- Frame **taking action** (creating CYRAiNO, reaching out) as loss prevention
-- **Specific messaging**: "Every day you wait is another day without the playdates, music partners, or community you're seeking"
+**Application to DAiTE** (REFINED - Focus on Opportunity, Not Fear):
+- Frame **taking action** as opportunity: "If you're seeking playdates, music partners, or community, DAiTE can help you find them"
+- Frame **CYRAiNO** as a tool to help with existing goals, not fear-based urgency
+- **Key principle**: Help people overcome barriers to connections they already want, don't create artificial fear
+- **Specific messaging**: "If you're looking for [X], CYRAiNO helps you discover the people who get you" (opportunity framing)
 
 #### 3. Self-Congruity Theory: Aligning with Identity
 
