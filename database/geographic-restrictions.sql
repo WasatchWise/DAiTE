@@ -145,7 +145,7 @@ $$ LANGUAGE plpgsql;
 -- Create trigger on user_profiles
 DROP TRIGGER IF EXISTS check_geographic_restrictions ON public.user_profiles;
 CREATE TRIGGER check_geographic_restrictions
-    BEFORE INSERT OR UPDATE OF location_country, location_coordinates
+    BEFORE INSERT OR UPDATE OF location_country, location_coordinates, location_type
     ON public.user_profiles
     FOR EACH ROW
     EXECUTE FUNCTION validate_user_location();
@@ -232,6 +232,7 @@ CREATE INDEX IF NOT EXISTS idx_geo_country ON public.geographic_restrictions(cou
 ALTER TABLE public.geographic_restrictions ENABLE ROW LEVEL SECURITY;
 
 -- Only service role can access geographic restriction data
+DROP POLICY IF EXISTS "Only service role can access geographic restrictions" ON public.geographic_restrictions;
 CREATE POLICY "Only service role can access geographic restrictions"
 ON public.geographic_restrictions
 FOR ALL
