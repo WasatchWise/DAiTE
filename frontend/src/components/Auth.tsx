@@ -18,11 +18,19 @@ export function Auth() {
     setLoading(true)
     setMessage('')
 
+    // Get the redirect URL - use production site URL or fallback to current origin
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                    (typeof window !== 'undefined' ? window.location.origin : 'https://www.daiteapp.com')
+    const redirectTo = `${siteUrl}/auth/callback`
+
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: redirectTo,
+          },
         })
         if (error) throw error
         setMessage('Check your email for the confirmation link!')
