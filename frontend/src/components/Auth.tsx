@@ -7,6 +7,7 @@ export function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [showResendEmail, setShowResendEmail] = useState(false)
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,9 +153,49 @@ export function Auth() {
         </button>
       </form>
 
+      {!isSignUp && (
+        <div className="mt-4 text-center">
+          <button
+            onClick={async () => {
+              if (!email.trim()) {
+                setMessage('Please enter your email address first')
+                return
+              }
+              if (!supabase) {
+                setMessage('Supabase not configured')
+                return
+              }
+              setLoading(true)
+              try {
+                const { error } = await supabase.auth.resend({
+                  type: 'signup',
+                  email: email.trim().toLowerCase(),
+                  options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                  },
+                })
+                if (error) throw error
+                setMessage('Confirmation email sent! Check your inbox (and spam folder).')
+              } catch (err: any) {
+                setMessage(`Error: ${err.message || 'Failed to resend email'}`)
+              } finally {
+                setLoading(false)
+              }
+            }}
+            className="text-sm text-purple-400 hover:text-purple-300"
+          >
+            Resend confirmation email
+          </button>
+        </div>
+      )}
+
       <div className="mt-4 text-center">
         <button
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => {
+            setIsSignUp(!isSignUp)
+            setShowResendEmail(false)
+            setMessage('')
+          }}
           className="text-sm text-purple-400 hover:text-purple-300"
         >
           {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
