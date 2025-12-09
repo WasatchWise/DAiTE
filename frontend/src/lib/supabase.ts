@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Extract Supabase URL from DATABASE_URL if NEXT_PUBLIC_SUPABASE_URL is not set correctly
-const getSupabaseUrl = () => {
+const getSupabaseUrl = (): string | null => {
   const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   // Check if it's a full URL
-  if (envUrl?.startsWith('http')) {
+  if (envUrl && (envUrl.startsWith('http://') || envUrl.startsWith('https://'))) {
     return envUrl
   }
   // Otherwise, construct from DATABASE_URL
@@ -16,18 +16,21 @@ const getSupabaseUrl = () => {
       return `https://${match[1]}.supabase.co`
     }
   }
-  return envUrl
+  return null
 }
 
 const supabaseUrl = getSupabaseUrl()
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not set. Database features will be unavailable.')
-  console.warn('NEXT_PUBLIC_SUPABASE_URL should be: https://{project-ref}.supabase.co')
+  if (typeof window !== 'undefined') {
+    console.warn('⚠️ Supabase environment variables not set. Database features will be unavailable.')
+    console.warn('Set NEXT_PUBLIC_SUPABASE_URL in Vercel environment variables.')
+    console.warn('Format: https://{project-ref}.supabase.co')
+  }
 }
 
-export const supabase = supabaseUrl && supabaseAnonKey
+export const supabase = supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http')
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
