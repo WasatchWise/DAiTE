@@ -11,39 +11,84 @@ export function Auth() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) {
-      setMessage('Supabase not configured')
+      setMessage('Error: Supabase not configured. Please check environment variables.')
       return
     }
 
     setLoading(true)
     setMessage('')
 
-    // Get the redirect URL - use production site URL or fallback to current origin
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-                    (typeof window !== 'undefined' ? window.location.origin : 'https://www.daiteapp.com')
+    // Get the redirect URL - ensure it's HTTPS
+    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    if (!siteUrl && typeof window !== 'undefined') {
+      siteUrl = window.location.origin
+      // Force HTTPS in production
+      if (siteUrl.includes('daiteapp.com') && !siteUrl.startsWith('https://')) {
+        siteUrl = siteUrl.replace('http://', 'https://')
+      }
+    }
+    if (!siteUrl) {
+      siteUrl = 'https://www.daiteapp.com'
+    }
+    // Ensure HTTPS
+    if (!siteUrl.startsWith('https://')) {
+      siteUrl = siteUrl.replace('http://', 'https://')
+    }
     const redirectTo = `${siteUrl}/auth/callback`
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim().toLowerCase(),
           password,
           options: {
             emailRedirectTo: redirectTo,
           },
         })
-        if (error) throw error
-        setMessage('Check your email for the confirmation link!')
+        
+        if (error) {
+          console.error('Sign up error:', error)
+          throw error
+        }
+        
+        // Check if email confirmation is required
+        if (data.user && !data.session) {
+          setMessage('Success! Please check your email and click the confirmation link to complete sign up.')
+        } else if (data.session) {
+          setMessage('Account created successfully! Redirecting...')
+          // Redirect to dashboard if session exists (auto-confirmed)
+          setTimeout(() => {
+            window.location.href = '/dashboard'
+          }, 1000)
+        } else {
+          setMessage('Check your email for the confirmation link!')
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim().toLowerCase(),
           password,
         })
-        if (error) throw error
-        setMessage('Signed in successfully!')
+        
+        if (error) {
+          console.error('Sign in error:', error)
+          // Provide more helpful error messages
+          if (error.message.includes('Invalid login')) {
+            throw new Error('Invalid email or password. Please check your credentials.')
+          } else if (error.message.includes('Email not confirmed')) {
+            throw new Error('Please check your email and click the confirmation link before signing in.')
+          }
+          throw error
+        }
+        
+        setMessage('Signed in successfully! Redirecting...')
+        setTimeout(() => {
+          window.location.href = '/dashboard'
+        }, 1000)
       }
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred')
+      console.error('Auth error:', error)
+      const errorMessage = error.message || 'An error occurred'
+      setMessage(`Error: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
