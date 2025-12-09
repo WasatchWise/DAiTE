@@ -53,7 +53,7 @@ export function Auth() {
         
         // Check if email confirmation is required
         if (data.user && !data.session) {
-          setMessage('Success! Please check your email and click the confirmation link to complete sign up.')
+          setMessage('Success! Please check your email and click the confirmation link to complete sign up. The email may take a few minutes to arrive.')
         } else if (data.session) {
           setMessage('Account created successfully! Redirecting...')
           // Redirect to dashboard if session exists (auto-confirmed)
@@ -61,8 +61,15 @@ export function Auth() {
             window.location.href = '/dashboard'
           }, 1000)
         } else {
-          setMessage('Check your email for the confirmation link!')
+          setMessage('Account created! Check your email for the confirmation link. If you don\'t see it, check your spam folder.')
         }
+        
+        // Log for debugging
+        console.log('Sign up result:', { 
+          user: data.user?.id, 
+          hasSession: !!data.session,
+          emailConfirmed: data.user?.email_confirmed_at ? true : false
+        })
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim().toLowerCase(),

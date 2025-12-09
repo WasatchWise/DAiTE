@@ -1,18 +1,33 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import { Auth } from '../components/Auth'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Home() {
+  const searchParams = useSearchParams()
   const [user, setUser] = useState<any>(null)
   const [showAuth, setShowAuth] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [authMessage, setAuthMessage] = useState<string | null>(null)
 
   useEffect(() => {
+    // Check for auth messages/errors from URL
+    const error = searchParams?.get('error')
+    const message = searchParams?.get('message')
+    if (error) {
+      setAuthMessage(`Error: ${error}`)
+      setShowAuth(true)
+    } else if (message) {
+      setAuthMessage(message)
+      setShowAuth(true)
+    }
+
+    // Check for existing session
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
@@ -20,8 +35,20 @@ export default function Home() {
           window.location.href = '/dashboard'
         }
       })
+      
+      // Listen for auth state changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setUser(session.user)
+          window.location.href = '/dashboard'
+        }
+      })
+      
+      return () => {
+        subscription.unsubscribe()
+      }
     }
-  }, [])
+  }, [searchParams])
 
   const daiteTypes = [
     { prefix: 'Play', color: 'from-emerald-400 to-teal-400', description: 'Playdates & family connections' },
