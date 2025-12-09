@@ -183,6 +183,10 @@ function HomeContent() {
             <span className="block text-white">embrace.</span>
           </h1>
           
+          <p className="text-sm sm:text-base text-stone-500/80 font-light max-w-xl mx-auto mb-4 sm:mb-6 px-2 italic">
+            DAiTE (抱いて) means &quot;embrace&quot; in Japanese—a name that emerged naturally, as if it was always meant to be.
+          </p>
+          
           <p className="text-base sm:text-lg md:text-xl text-stone-500 font-light max-w-2xl mx-auto mb-8 sm:mb-12 px-2">
             Your CYRAiNO discovers meaningful connections through real conversation—not algorithms, not swipes.
           </p>
