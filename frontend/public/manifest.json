@@ -4,8 +4,8 @@
   "description": "Where connections have depth, not just data. AI-powered matchmaking through agent-to-agent conversations.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#7c3aed",
+  "background_color": "#fce7f3",
+  "theme_color": "#ec4899",
   "orientation": "portrait-primary",
   "icons": [
     {
