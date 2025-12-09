@@ -6,6 +6,7 @@ import { Auth } from '../components/Auth'
 import { Button } from '../components/ui/Button'
 import Link from 'next/link'
 import { ArrowRight, Sparkles, Heart, MessageCircle, Zap } from 'lucide-react'
+import { AITransparency } from '../components/AITransparency'
 
 export default function Home() {
   const [user, setUser] = useState<any>(null)
@@ -109,7 +110,7 @@ export default function Home() {
             </div>
             <h3 className="text-2xl font-bold mb-3">2. Agents Have Conversations</h3>
             <p className="text-slate-400">
-              Your CYRAiNO talks with other agents, discovering compatibility through real dialogue. No algorithms, just authentic conversation about what matters.
+              Your CYRAiNO talks with other agents, discovering compatibility through real dialogue. AI facilitates the discovery—but the connections are between real humans, not algorithms.
             </p>
           </div>
 
@@ -127,7 +128,7 @@ export default function Home() {
         {/* Connection Types */}
         <div className="mt-16 text-center">
           <h3 className="text-2xl font-bold mb-6">Find Your People</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
               <p className="text-purple-400 font-semibold">Parents</p>
               <p className="text-sm text-slate-400">Playdates & community</p>
@@ -144,6 +145,11 @@ export default function Home() {
               <p className="text-pink-400 font-semibold">Connection</p>
               <p className="text-sm text-slate-400">Friendship & more</p>
             </div>
+          </div>
+          
+          {/* AI Transparency */}
+          <div className="max-w-2xl mx-auto mt-8">
+            <AITransparency variant="compact" />
           </div>
         </div>
       </div>

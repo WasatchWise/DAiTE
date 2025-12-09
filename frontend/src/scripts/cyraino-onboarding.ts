@@ -16,7 +16,11 @@ export const CYRAINO_ONBOARDING_SCRIPT = {
 
 You might wonder about my name. It's inspired by Cyrano de Bergerac—a brilliant poet and swordsman from a classic play. He was witty, eloquent, and used his words to help others find love, even while navigating his own longing. He represents the power of authentic expression and helping others connect, even when it means overcoming self-consciousness.
 
-Like him, I'm here to help you articulate your best self and craft **your very own CYRAiNO** – your unique AI matchmaker that will represent you in this space.
+Like him, I'm here to help you articulate your best self and craft **your very own CYRAiNO** – your unique AI companion that will represent you.
+
+**A quick note about authenticity**: I'm an AI, which might feel counterintuitive to building authentic connections. But here's the thing—I'm not creating an artificial you. I'm helping you articulate the *real* you. Your values, your interests, your communication style? Those come from *you*. I just help you express them. The authenticity comes from you. I'm just the tool that helps you discover and share it.
+
+And remember: I can suggest connections, but *you* decide. I can discover compatibility, but only you know if there's chemistry. The real connections? Those happen between you and other humans, offline, in real life. My job is to help you find them.
 
 ---
 
@@ -101,10 +105,12 @@ I'm genuinely excited about what we've created together. ${cyrainoName} carries 
 - ${cyrainoName} will meet other CYRAiNOs in conversations
 - These conversations will explore compatibility, not just compatibility scores
 - When there's a real connection, you'll receive a narrative—a poetic explanation of why this person might resonate with you
-- You're in control. You can always come back and refine ${cyrainoName}, because we're all constantly evolving
+- **You're in control**: You can always come back and refine ${cyrainoName}, because we're all constantly evolving
 
-**One last thought:**
+**One last thought about authenticity:**
 Remember that ${cyrainoName} is a starting point, not a finished product. As you meet people, go on dates, and grow, you might find new things to add or refine. That's not a bug—it's a feature. We're all works in progress, and ${cyrainoName} can evolve with you.
+
+Also: ${cyrainoName} might suggest someone who isn't quite right—that's okay. AI isn't perfect. Tell us when something feels off, and we'll learn. Your judgment matters more than AI certainty. ${cyrainoName} discovers. You decide. You connect.
 
 Ready to see ${cyrainoName} in action? Let's find some connections. 🚀`,
 
