@@ -27,6 +27,14 @@ export interface AgentConversation {
   compatibilityScore: number
   matchDecision: 'YES' | 'NO'
   narrative?: string
+  safetyAnalysis?: {
+    authenticityScore: number // 0-100, higher = more authentic
+    empathyScore: number // 0-100, higher = more empathetic
+    consistencyScore: number // 0-100, higher = more consistent
+    riskLevel: 'low' | 'moderate' | 'high' | 'critical'
+    concerns: string[]
+    redFlags: string[]
+  }
 }
 
 export async function simulateAgentDialogue(
@@ -55,6 +63,13 @@ Agent B (${agentB.name}):
 Instructions:
 1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' potential for connection. This could be friendship, community, collaboration, playdates, support, or romantic—whatever makes sense.
 
+SAFETY ANALYSIS: After the conversation, analyze for red flags:
+- Authenticity: Does the conversation feel genuine or performative? Are there moments of vulnerability vs. constant perfection?
+- Empathy: Does this person show emotional intelligence? Can they understand others' perspectives?
+- Consistency: Does the narrative align with their profile? Are there contradictions or evasiveness?
+- Manipulation Signals: Love bombing, rapid escalation, pressure tactics, boundary violations, victim positioning
+- Risk Assessment: Rate as low, moderate, high, or critical with specific concerns and evidence
+
 2. Provide a brief summary of their interaction and perceived compatibility.
 
 3. Provide a compatibilityScore (0-100).
@@ -73,7 +88,15 @@ Format as JSON:
   "summary": "...",
   "compatibilityScore": 85,
   "matchDecision": "YES",
-  "narrative": "Your combined emotional + rational explanation here. First paragraph: poetic, emotional resonance. Second paragraph: concrete justification points that help validate the connection choice."
+  "narrative": "Your combined emotional + rational explanation here. First paragraph: poetic, emotional resonance. Second paragraph: concrete justification points that help validate the connection choice.",
+  "safetyAnalysis": {
+    "authenticityScore": 85,
+    "empathyScore": 90,
+    "consistencyScore": 80,
+    "riskLevel": "low",
+    "concerns": [],
+    "redFlags": []
+  }
 }
 `
 
