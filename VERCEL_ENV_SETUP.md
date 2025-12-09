@@ -25,9 +25,10 @@ NEXT_PUBLIC_SUPABASE_URL
 ```
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
-**Value:** Your Supabase anon/public key
+**Value:** Your Supabase anon/public key (JWT format, starts with `eyJ...`)
 - Get from: Supabase Dashboard → Project Settings → API
 - Look for `anon` `public` key
+- ⚠️ Should be a JWT token starting with `eyJ...`, not `sb_secret_...`
 
 #### Optional (for AI features):
 ```
