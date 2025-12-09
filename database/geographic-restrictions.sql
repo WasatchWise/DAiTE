@@ -43,6 +43,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
+-- Drop old version if it exists (without is_home_location parameter)
+DROP FUNCTION IF EXISTS is_location_allowed(TEXT, DECIMAL, DECIMAL);
+DROP FUNCTION IF EXISTS is_location_allowed(TEXT);
+
 -- Function to check if user HOME location is allowed
 -- Note: This checks permanent/home location, NOT current/temporary location
 -- Travelers visiting the SLC area can still use DAiTE if their home is outside the radius
@@ -149,6 +153,10 @@ CREATE TRIGGER check_geographic_restrictions
     ON public.user_profiles
     FOR EACH ROW
     EXECUTE FUNCTION validate_user_location();
+
+-- Drop old version if it exists (without is_home_location parameter)
+DROP FUNCTION IF EXISTS can_user_register(TEXT, DECIMAL, DECIMAL);
+DROP FUNCTION IF EXISTS can_user_register(TEXT);
 
 -- Also check on users table if country is stored there
 -- Add helper function for checking during registration
