@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Navigation } from '@/components/Navigation'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -18,6 +19,106 @@ import {
   Activity
 } from 'lucide-react'
 
+function RecentMatches({ userId }: { userId?: string }) {
+  const [matches, setMatches] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!supabase || !userId) {
+      setLoading(false)
+      return
+    }
+
+    const loadMatches = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('matches')
+          .select(`
+            id,
+            user_1_id,
+            user_2_id,
+            discovery_id,
+            discoveries (
+              narrative_excerpt,
+              compatibility_highlights
+            )
+          `)
+          .or(`user_1_id.eq.${userId},user_2_id.eq.${userId}`)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(3)
+
+        if (error) throw error
+
+        // Get user details for matches
+        if (data) {
+          const matchPromises = data.map(async (match) => {
+            const otherUserId = match.user_1_id === userId ? match.user_2_id : match.user_1_id
+            const { data: otherUser } = await supabase
+              .from('users')
+              .select('pseudonym')
+              .eq('id', otherUserId)
+              .single()
+
+            return {
+              ...match,
+              otherUser: otherUser || { pseudonym: 'Unknown' },
+              compatibility: match.discoveries?.compatibility_highlights?.score || 85
+            }
+          })
+
+          const matchesWithUsers = await Promise.all(matchPromises)
+          setMatches(matchesWithUsers)
+        }
+      } catch (error) {
+        console.error('Error loading matches:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadMatches()
+  }, [userId])
+
+  if (loading) {
+    return <div className="text-slate-400 text-sm">Loading...</div>
+  }
+
+  if (matches.length === 0) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-slate-400 text-sm">No connections yet</p>
+        <Link href="/discover">
+          <Button variant="ghost" size="sm" className="mt-2">
+            Start Discovering
+          </Button>
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {matches.map((match) => (
+        <div key={match.id} className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+              <span className="text-sm font-bold">
+                {match.otherUser?.pseudonym?.[0]?.toUpperCase() || '?'}
+              </span>
+            </div>
+            <div>
+              <p className="font-medium">{match.otherUser?.pseudonym || 'Unknown'}</p>
+              <p className="text-xs text-slate-400">{match.compatibility}% compatibility</p>
+            </div>
+          </div>
+          <Badge variant="success">Mutual</Badge>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [agent, setAgent] = useState<any>(null)
@@ -29,19 +130,91 @@ export default function DashboardPage() {
   })
 
   useEffect(() => {
-    if (supabase) {
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        setUser(user)
-        // TODO: Fetch agent and stats from database
-        setAgent({ name: 'CY-Sarah' }) // Mock data
-        setStats({
-          matches: 3,
-          messages: 12,
-          upcomingDates: 2,
-          compatibility: 87
-        })
-      })
+    if (!supabase) {
+      window.location.href = '/?error=supabase_not_configured'
+      return
     }
+
+    const loadDashboardData = async () => {
+      try {
+        // Get current user
+        const { data: { user: authUser }, error: userError } = await supabase.auth.getUser()
+        if (userError) throw userError
+        if (!authUser) {
+          window.location.href = '/?error=not_authenticated'
+          return
+        }
+        setUser(authUser)
+
+        // Fetch user record
+        const { data: userRecord } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', authUser.id)
+          .single()
+
+        // Fetch CYRAiNO agent
+        const { data: agentData } = await supabase
+          .from('cyraino_agents')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .single()
+
+        if (agentData) {
+          setAgent(agentData)
+        }
+
+        // Fetch stats
+        const [matchesResult, messagesResult, datesResult] = await Promise.all([
+          // Count matches
+          supabase
+            .from('matches')
+            .select('id', { count: 'exact', head: true })
+            .or(`user_1_id.eq.${authUser.id},user_2_id.eq.${authUser.id}`)
+            .eq('is_active', true),
+          
+          // Count unread messages
+          supabase
+            .from('messages')
+            .select('id', { count: 'exact', head: true })
+            .eq('recipient_user_id', authUser.id)
+            .eq('is_read', false),
+          
+          // Count upcoming dates
+          supabase
+            .from('planned_dates')
+            .select('id', { count: 'exact', head: true })
+            .or(`planned_by_user_id.eq.${authUser.id},other_user_id.eq.${authUser.id}`)
+            .eq('status', 'planned')
+            .gte('scheduled_at', new Date().toISOString())
+        ])
+
+        // Calculate average compatibility from matches
+        const { data: matchesData } = await supabase
+          .from('matches')
+          .select('discovery_id')
+          .or(`user_1_id.eq.${authUser.id},user_2_id.eq.${authUser.id}`)
+          .eq('is_active', true)
+          .limit(10)
+
+        let avgCompatibility = 0
+        if (matchesData && matchesData.length > 0) {
+          // For now, we'll set a default. Later we can calculate from discoveries
+          avgCompatibility = 85
+        }
+
+        setStats({
+          matches: matchesResult.count || 0,
+          messages: messagesResult.count || 0,
+          upcomingDates: datesResult.count || 0,
+          compatibility: avgCompatibility
+        })
+      } catch (error) {
+        console.error('Error loading dashboard data:', error)
+      }
+    }
+
+    loadDashboardData()
   }, [])
 
   const quickActions = [
@@ -76,8 +249,9 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Navigation />
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-safe mb-20 md:mb-8">
         {/* Welcome Header */}
@@ -193,33 +367,7 @@ export default function DashboardPage() {
               <CardDescription>Your latest meaningful connections</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-                      <span className="text-sm font-bold">A</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Alex</p>
-                      <p className="text-xs text-slate-400">92% compatibility</p>
-                    </div>
-                  </div>
-                  <Badge variant="success">Mutual</Badge>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 flex items-center justify-center">
-                      <span className="text-sm font-bold">J</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Jordan</p>
-                      <p className="text-xs text-slate-400">87% compatibility</p>
-                    </div>
-                  </div>
-                  <Badge variant="success">Mutual</Badge>
-                </div>
-              </div>
+              <RecentMatches userId={user?.id} />
               
               <Link href="/matches">
                 <Button variant="ghost" className="w-full mt-4">
@@ -276,7 +424,8 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   )
 }
 

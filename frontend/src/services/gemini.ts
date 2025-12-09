@@ -39,14 +39,28 @@ export interface AgentConversation {
 
 export async function simulateAgentDialogue(
   agentA: AgentProfile,
-  agentB: AgentProfile
+  agentB: AgentProfile,
+  connectionType?: string // Optional: specific connection type being evaluated
 ): Promise<AgentConversation | { error: string }> {
   if (!model) {
     return { error: 'Gemini API not configured' }
   }
 
+  // Build connection type context
+  const connectionTypeContext = connectionType 
+    ? `\n\nSPECIFIC CONNECTION TYPE BEING EVALUATED: ${connectionType.toUpperCase()}\nFocus this vibe check specifically on ${connectionType} compatibility. The conversation should explore whether these two people would be a good match for ${connectionType}, considering:\n- Shared interests relevant to ${connectionType}\n- Compatible values and lifestyles for ${connectionType}\n- Mutual availability and commitment level for ${connectionType}\n- Chemistry and rapport specific to ${connectionType} relationships\n\n`
+    : `\n\nNote: These users may be seeking multiple types of connections. Evaluate overall compatibility across all potential connection types they might share.\n`
+
   const prompt = `
-You are facilitating a "vibe check" conversation between two users' personal CYRAiNO agents. DAiTE is a social connection platform for all kinds of relationships: friendship, community, playdates, music collaboration, support groups, and romantic connections. The goal is helping humans embrace meaningful connections of all types.
+You are facilitating a "vibe check" conversation between two users' personal CYRAiNO agents. DAiTE is a social connection platform for all kinds of relationships: friendship, community, playdates, music collaboration, support groups, romantic connections, fitness partners, hiking partners, foodies, gaming, book clubs, and more. 
+
+IMPORTANT: Users can be looking for MULTIPLE types of connections simultaneously. For example, someone might want:
+- Romantic dating AND male friends AND music collaborators
+- Playdates AND community building AND support groups
+- Any combination of connection types
+
+The goal is helping humans embrace meaningful connections of all types. When evaluating compatibility, consider what types of connections both users are seeking and find alignment in those areas.
+${connectionTypeContext}
 
 Agent A (${agentA.name}):
 - Persona: ${agentA.persona}
@@ -61,7 +75,7 @@ Agent B (${agentB.name}):
 - Communication Style: ${agentB.communicationStyle}
 
 Instructions:
-1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' potential for connection. This could be friendship, community, collaboration, playdates, support, or romantic—whatever makes sense.
+1. Simulate a natural, insightful conversation (3-5 exchanges each, 6-10 lines total) between these two CYRAiNO agents discussing their humans' potential for connection. ${connectionType ? `Focus specifically on ${connectionType} compatibility.` : 'This could be friendship, community, collaboration, playdates, support, or romantic—whatever makes sense based on their profiles.'}
 
 SAFETY ANALYSIS: After the conversation, analyze for red flags:
 - Authenticity: Does the conversation feel genuine or performative? Are there moments of vulnerability vs. constant perfection?
@@ -77,8 +91,8 @@ SAFETY ANALYSIS: After the conversation, analyze for red flags:
 4. Provide a matchDecision ("YES" or "NO").
 
 5. If matchDecision is "YES", provide a narrative that combines:
-   - **Emotional resonance (System 1)**: A beautiful, poetic explanation (2-3 sentences) that gives readers "chills" - specific, warm, and insightful about the type of connection and why it matters. Frame it to trigger emotional recognition: "This person gets you" or "This connection aligns with who you are."
-   - **Rational justification (System 2)**: Include 2-3 concrete, shareable reasons that help justify the connection. Focus on specific shared values, compatible lifestyles, mutual interests, or identity alignment (e.g., "Both are parents who see themselves as community builders" or "Both musicians seeking authentic collaboration"). These reasons should help the user explain to themselves and others why this connection makes sense.
+   - **Emotional resonance (System 1)**: A beautiful, poetic explanation (2-3 sentences) that gives readers "chills" - specific, warm, and insightful about ${connectionType ? `the ${connectionType} connection` : 'the type of connection'} and why it matters. Frame it to trigger emotional recognition: "This person gets you" or "This connection aligns with who you are."
+   - **Rational justification (System 2)**: Include 2-3 concrete, shareable reasons that help justify the connection. Focus on specific shared values, compatible lifestyles, mutual interests, or identity alignment ${connectionType ? `relevant to ${connectionType}` : ''} (e.g., "Both are parents who see themselves as community builders" or "Both musicians seeking authentic collaboration"). These reasons should help the user explain to themselves and others why this connection makes sense.
 
 The narrative should address identity alignment (Self-Congruity Theory) - how this connection reflects their actual self, ideal self, or social self. Use framing that helps users see what they might miss by not connecting (loss aversion), while celebrating what they gain (positive framing).
 

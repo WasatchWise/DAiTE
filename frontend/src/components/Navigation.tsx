@@ -1,9 +1,14 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Home, Search, Heart, MessageCircle, Calendar, Settings } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Home, Search, Heart, MessageCircle, Calendar, Settings, LogOut } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
+
+import { Award } from 'lucide-react'
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -11,11 +16,34 @@ const navItems = [
   { href: '/matches', icon: Heart, label: 'Matches' },
   { href: '/messages', icon: MessageCircle, label: 'Messages' },
   { href: '/dates', icon: Calendar, label: 'Dates' },
+  { href: '/challenges', icon: Award, label: 'Challenges' },
   { href: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 export function Navigation() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    if (supabase) {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        setUser(user)
+      })
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null)
+      })
+    }
+  }, [])
+
+  const handleLogout = async () => {
+    if (supabase) {
+      await supabase.auth.signOut()
+      router.push('/')
+      router.refresh()
+    }
+  }
   
   return (
     <>
@@ -59,6 +87,16 @@ export function Navigation() {
                   </Link>
                 )
               })}
+              {user && (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/50"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                  <span className="text-sm font-medium">Logout</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

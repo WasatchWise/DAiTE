@@ -1,65 +1,60 @@
-# Vercel Deployment Fix
+# Vercel Deployment Troubleshooting
 
-## The Problem
-Vercel says: `The specified Root Directory "frontend/" does not exist.`
+## Issue: Automatic deployment not triggering
 
-## Solutions
+### Quick Fix Options
 
-### Option 1: Remove Trailing Slash (TRY THIS FIRST)
-In Vercel Dashboard → Settings → General → Root Directory:
-- ❌ Change from: `frontend/`
-- ✅ Change to: `frontend` (no trailing slash)
+#### Option 1: Trigger via Vercel Dashboard
+1. Go to https://vercel.com/dashboard
+2. Find your DAiTE project
+3. Click "Deployments" tab
+4. Click "Redeploy" on the latest deployment
+5. Or click "Create Deployment" to trigger a new one
 
-Vercel might be strict about the path format.
-
-### Option 2: Verify Directory is Committed
-Make sure the `frontend/` directory and its files are committed to git:
-
+#### Option 2: Use Vercel CLI
 ```bash
-git status
-git add frontend/
-git commit -m "Add frontend directory"
-git push
+cd frontend
+vercel --prod
 ```
 
-If `frontend/` is in `.gitignore`, Vercel won't see it.
+#### Option 3: Check GitHub Integration
+1. Go to Vercel Dashboard → Your Project → Settings → Git
+2. Verify:
+   - ✅ Repository is connected
+   - ✅ Production Branch is set to `main`
+   - ✅ Auto-deploy is enabled
 
-### Option 3: Check Case Sensitivity
-Make sure the case matches exactly:
-- `frontend` (lowercase) ✅
-- `Frontend` (capital F) ❌
-- `FRONTEND` (all caps) ❌
-
-### Option 4: Verify Repository Structure
-Vercel needs to see:
-```
-DAiTE/
-├── frontend/
-│   ├── package.json
-│   ├── next.config.js
-│   └── src/
-```
-
-If these files don't exist in the repository, Vercel can't build.
-
-## Quick Check Commands
-
-Run these locally to verify:
-
+#### Option 4: Force push (triggers webhook)
 ```bash
-# Check if frontend exists
-ls -la frontend/
-
-# Check if package.json exists
-ls -la frontend/package.json
-
-# Check if it's in git (if repo is initialized)
-git ls-files frontend/ | head -5
+git commit --allow-empty -m "Trigger deployment"
+git push origin main
 ```
 
-## Recommended Steps
+### Common Issues
 
-1. **First, try removing the trailing slash** - Set Root Directory to `frontend` (not `frontend/`)
-2. **Verify git commit** - Make sure `frontend/` is committed
-3. **Redeploy** - Trigger a new deployment
-4. **Check build logs** - Should see "Installing dependencies" and "next build"
+**Issue**: GitHub webhook not firing
+- **Fix**: Reconnect GitHub in Vercel Settings → Git → Disconnect and reconnect
+
+**Issue**: Root directory mismatch
+- **Current**: Vercel should be set to `frontend/` as Root Directory
+- **Check**: Vercel Dashboard → Settings → General → Root Directory
+
+**Issue**: Build command failing
+- **Current**: Should auto-detect Next.js
+- **Check**: Vercel Dashboard → Settings → General → Build & Development Settings
+
+### Current Configuration
+
+- **Root Directory**: `frontend` (no trailing slash)
+- **Framework**: Next.js (auto-detected)
+- **Build Command**: Auto (Next.js default: `next build`)
+- **Output Directory**: `.next` (Next.js default)
+
+### Verification Checklist
+
+- [ ] GitHub repo connected in Vercel
+- [ ] Root Directory set to `frontend`
+- [ ] Production branch is `main`
+- [ ] Auto-deploy enabled
+- [ ] Environment variables set
+- [ ] Domain configured (daiteapp.com)

@@ -3,7 +3,14 @@
  * Run with: npx tsx scripts/check-database.ts
  */
 
+import { config } from 'dotenv'
+import { resolve } from 'path'
 import { createClient } from '@supabase/supabase-js'
+
+// Load .env.local file
+config({ path: resolve(process.cwd(), '.env.local') })
+// Also try .env as fallback
+config({ path: resolve(process.cwd(), '.env') })
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
