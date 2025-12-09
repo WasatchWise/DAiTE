@@ -3,15 +3,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { Auth } from '../components/Auth'
-import { Button } from '../components/ui/Button'
-import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Sparkles, Heart, MessageCircle, Zap } from 'lucide-react'
-import { AITransparency } from '../components/AITransparency'
+import Link from 'next/link'
 
 export default function Home() {
   const [user, setUser] = useState<any>(null)
   const [showAuth, setShowAuth] = useState(false)
+  const [activeConnection, setActiveConnection] = useState(0)
+  const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
     if (supabase) {
@@ -24,14 +23,73 @@ export default function Home() {
     }
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const connectionTypes = [
+    {
+      id: 'musicians',
+      icon: '🎵',
+      title: 'Musicians',
+      subtitle: 'Find your sound',
+      description: 'Discover collaborators who hear music the way you do. From jam sessions to studio projects, find people who understand that the best music happens when egos leave the room.',
+      gradient: 'from-amber-600 to-rose-600'
+    },
+    {
+      id: 'parents',
+      icon: '🌱',
+      title: 'Parents',
+      subtitle: 'Build your village',
+      description: 'Connect with families who share your values and chaos. Playdates that actually work, friendships that understand why you cancelled, community that gets it.',
+      gradient: 'from-emerald-600 to-teal-600'
+    },
+    {
+      id: 'community',
+      icon: '✨',
+      title: 'Community',
+      subtitle: 'Find your people',
+      description: 'Whether it\'s a book club, hiking group, or creative collective—find gatherings where you belong and people who are genuinely glad you showed up.',
+      gradient: 'from-violet-600 to-purple-600'
+    },
+    {
+      id: 'connection',
+      icon: '🌸',
+      title: 'Connection',
+      subtitle: 'Something more',
+      description: 'When you\'re ready for deeper connection—friendship, romance, or something you can\'t quite name yet—let your CYRAiNO find the people worth embracing.',
+      gradient: 'from-rose-600 to-pink-600'
+    }
+  ]
+
+  const steps = [
+    {
+      number: '01',
+      title: 'Create Your CYRAiNO',
+      description: 'Share who you are—your values, quirks, what makes you laugh, what you\'re looking for. Your CYRAiNO becomes your advocate in the search for connection.'
+    },
+    {
+      number: '02',
+      title: 'Agents Converse',
+      description: 'Your CYRAiNO talks with others, discovering compatibility through real dialogue. No algorithms. No swipes. Just genuine conversation about what matters.'
+    },
+    {
+      number: '03',
+      title: 'Discover & Embrace',
+      description: 'When something resonates, you receive a narrative—not a match percentage, but a story about why this person might matter to you.'
+    }
+  ]
+
   if (showAuth) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-stone-950 text-white flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <button
               onClick={() => setShowAuth(false)}
-              className="text-slate-400 hover:text-white mb-4"
+              className="text-stone-400 hover:text-white mb-4"
             >
               ← Back
             </button>
@@ -41,13 +99,11 @@ export default function Home() {
                 alt="CYRAiNO" 
                 width={80}
                 height={80}
-                className="w-20 h-20 rounded-full object-cover mr-4"
+                className="w-20 h-20 rounded-full object-cover mr-4 ring-4 ring-rose-500/30"
               />
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                DAiTE
-              </h1>
+              <h1 className="text-5xl font-light tracking-tight">DAiTE</h1>
             </div>
-            <p className="text-slate-300">Your Personal CYRAiNO</p>
+            <p className="text-stone-400">Your Personal CYRAiNO</p>
           </div>
           <Auth />
         </div>
@@ -56,175 +112,321 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-stone-950 text-white overflow-x-hidden">
+      {/* Navigation */}
+      <nav 
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={{ 
+          backgroundColor: scrollY > 50 ? 'rgba(12, 10, 9, 0.9)' : 'transparent',
+          backdropFilter: scrollY > 50 ? 'blur(12px)' : 'none'
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl">🌸</span>
+            <span className="text-xl font-light tracking-tight">DAiTE</span>
+          </Link>
+          <div className="flex items-center gap-8">
+            <a href="#how-it-works" className="text-sm text-stone-400 hover:text-white transition-colors hidden sm:block">
+              How It Works
+            </a>
+            <a href="#connections" className="text-sm text-stone-400 hover:text-white transition-colors hidden sm:block">
+              Connections
+            </a>
+            <button 
+              onClick={() => setShowAuth(true)}
+              className="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-medium transition-all"
+            >
+              Create CYRAiNO
+            </button>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        {/* Cherry Blossom Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
-        <div className="absolute top-10 left-10 w-32 h-32 bg-pink-300/10 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute top-40 right-20 w-24 h-24 bg-purple-300/10 rounded-full blur-xl animate-pulse delay-300" />
-        <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-pink-400/10 rounded-full blur-lg animate-pulse delay-700" />
-        {/* Floating Cherry Blossom Petals */}
-        <div className="absolute top-1/4 left-1/4 text-3xl opacity-20 animate-float-petal">🌸</div>
-        <div className="absolute top-1/3 right-1/4 text-2xl opacity-15 animate-float-petal delay-300">🌸</div>
-        <div className="absolute bottom-1/3 left-1/3 text-2xl opacity-20 animate-float-petal delay-700">🌸</div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-          <div className="text-center">
-            {/* CYRAiNO Logo - Prominently Displayed */}
-            <div className="flex items-center justify-center mb-8">
-              <div className="relative">
-                <Image 
-                  src="/cyraino.png" 
-                  alt="CYRAiNO" 
-                  width={120}
-                  height={120}
-                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover ring-4 ring-pink-300/30 shadow-2xl shadow-pink-500/20"
-                />
-                {/* Cherry Blossom Petal Decorations */}
-                <div className="absolute -top-2 -left-2 w-4 h-4 bg-pink-300/40 rounded-full blur-sm animate-pulse" />
-                <div className="absolute -top-1 -right-3 w-3 h-3 bg-purple-300/40 rounded-full blur-sm animate-pulse delay-300" />
-                <div className="absolute -bottom-2 -left-1 w-3 h-3 bg-pink-400/40 rounded-full blur-sm animate-pulse delay-700" />
-              </div>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 px-4">
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
-                Helping humans embrace.
-              </span>
-            </h1>
-            
-            <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto px-4">
-              Create <span className="text-purple-400 font-semibold">CYRAiNO</span>—your personal AI companion that discovers meaningful connections. If you&apos;re seeking playdates, music partners, community, or friendships, CYRAiNO helps you find the people who get you.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setShowAuth(true)}
-                className="text-lg px-8 py-4"
-              >
-                Get Started
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              
-              <Link href="#how-it-works">
-                <Button variant="ghost" size="lg" className="text-lg px-8 py-4">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">How DAiTE Works</h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            A different approach to finding meaningful connections—all kinds of connections
-          </p>
+      <section className="relative min-h-screen flex items-center justify-center px-6">
+        {/* Animated background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div 
+            className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-rose-500/10 rounded-full blur-[128px] animate-pulse" 
+            style={{ animationDuration: '8s' }} 
+          />
+          <div 
+            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[128px] animate-pulse"
+            style={{ animationDuration: '10s', animationDelay: '1s' }} 
+          />
+          <div 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-violet-500/5 rounded-full blur-[100px] animate-pulse"
+            style={{ animationDuration: '12s', animationDelay: '2s' }} 
+          />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center relative">
-            {/* Cherry Blossom Petal Decoration */}
-            <div className="absolute -top-2 right-4 text-2xl opacity-30 animate-pulse">🌸</div>
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/30">
-              <Sparkles className="w-8 h-8 text-white" />
+        {/* Floating blossoms */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-2xl opacity-20 animate-float-petal"
+              style={{
+                left: `${15 + i * 15}%`,
+                top: `${20 + (i % 3) * 25}%`,
+                animationDelay: `${i * 0.5}s`,
+                animationDuration: `${6 + i}s`
+              }}
+            >
+              🌸
             </div>
-            <h3 className="text-2xl font-bold mb-3">1. Create Your CYRAiNO</h3>
-            <p className="text-slate-400">
-              Build your personal AI companion by sharing who you are—your values, interests, and what you&apos;re looking for. Whether it&apos;s friendship, community, or connection.
-            </p>
-          </div>
-
-          <div className="text-center relative">
-            {/* Cherry Blossom Petal Decoration */}
-            <div className="absolute -top-2 left-4 text-2xl opacity-30 animate-pulse delay-300">🌸</div>
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30">
-              <MessageCircle className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">2. Agents Have Conversations</h3>
-            <p className="text-slate-400">
-              Your CYRAiNO talks with other agents, discovering compatibility through real dialogue. AI facilitates the discovery—but the connections are between real humans, not algorithms.
-            </p>
-          </div>
-
-          <div className="text-center relative">
-            {/* Cherry Blossom Petal Decoration */}
-            <div className="absolute -top-2 right-4 text-2xl opacity-30 animate-pulse delay-700">🌸</div>
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/30">
-              <Heart className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">3. Discover Connections</h3>
-            <p className="text-slate-400">
-              When connections resonate, you get a beautiful narrative explaining why this person matters. From playdates to music sessions, community events to deep friendships.
-            </p>
-          </div>
+          ))}
         </div>
 
-        {/* Connection Types */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold mb-6">Find Your People</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <p className="text-purple-400 font-semibold">Parents</p>
-              <p className="text-sm text-slate-400">Playdates & community</p>
-            </div>
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <p className="text-pink-400 font-semibold">Musicians</p>
-              <p className="text-sm text-slate-400">Jam sessions & collaboration</p>
-            </div>
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <p className="text-purple-400 font-semibold">Community</p>
-              <p className="text-sm text-slate-400">Events & gatherings</p>
-            </div>
-            <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <p className="text-pink-400 font-semibold">Connection</p>
-              <p className="text-sm text-slate-400">Friendship & more</p>
-            </div>
+        <div className="relative max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-sm text-stone-400">AI-facilitated human connection</span>
           </div>
           
-          {/* AI Transparency */}
-          <div className="max-w-2xl mx-auto mt-8">
-            <AITransparency variant="compact" />
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-light tracking-tight mb-6">
+            Helping humans
+            <span className="block bg-gradient-to-r from-rose-400 via-amber-300 to-rose-400 bg-clip-text text-transparent">
+              embrace.
+            </span>
+          </h1>
+          
+          <p className="text-xl sm:text-2xl text-stone-400 font-light max-w-2xl mx-auto mb-12 leading-relaxed">
+            Create CYRAiNO—your personal AI companion that discovers meaningful connections through real conversation, not algorithms.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={() => setShowAuth(true)}
+              className="group px-8 py-4 bg-white text-stone-900 rounded-full font-medium 
+                       hover:bg-rose-100 transition-all duration-300 flex items-center gap-3"
+            >
+              Create Your CYRAiNO
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            <a 
+              href="#how-it-works" 
+              className="px-8 py-4 text-stone-400 hover:text-white transition-colors flex items-center gap-2"
+            >
+              See how it works
+            </a>
           </div>
         </div>
-      </div>
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 py-16">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold mb-4">
-            Ready to find your people?
-          </h2>
-          <p className="text-xl text-slate-300 mb-8">
-            Join DAiTE and discover connections that matter—whether you&apos;re seeking friendship, community, playdates, or something more. Helping humans embrace, one connection at a time.
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-stone-600">
+          <span className="text-xs uppercase tracking-widest">Scroll</span>
+          <div className="w-px h-8 bg-gradient-to-b from-stone-600 to-transparent" />
+        </div>
+      </section>
+
+      {/* Philosophy Statement */}
+      <section className="py-32 px-6 border-t border-stone-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-3xl sm:text-4xl md:text-5xl font-light text-stone-300 leading-relaxed">
+            <span className="text-white">AI facilitates.</span>
+            <br />
+            <span className="text-rose-400">Humans connect.</span>
           </p>
-          <Button
-            variant="primary"
-            size="lg"
+          <p className="mt-8 text-lg text-stone-500 max-w-2xl mx-auto">
+            CYRAiNO discovers compatibility through genuine dialogue—but real connections happen between you and other people, not profiles.
+          </p>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="py-32 px-6 bg-stone-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <span className="text-sm uppercase tracking-widest text-rose-400">The Process</span>
+            <h2 className="text-4xl sm:text-5xl font-light mt-4">How DAiTE Works</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+            {steps.map((step, i) => (
+              <div key={i} className="relative group">
+                {/* Connector line */}
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-12 left-full w-full h-px bg-gradient-to-r from-stone-700 to-transparent" />
+                )}
+                
+                <div className="p-8 rounded-3xl bg-stone-900/50 border border-stone-800 
+                              hover:border-stone-700 transition-all duration-500
+                              hover:transform hover:-translate-y-1">
+                  <span className="text-5xl font-light text-stone-700 group-hover:text-rose-900 transition-colors">
+                    {step.number}
+                  </span>
+                  <h3 className="text-2xl font-light mt-4 mb-3">{step.title}</h3>
+                  <p className="text-stone-400 leading-relaxed">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Connection Types */}
+      <section id="connections" className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-sm uppercase tracking-widest text-rose-400">Find Your People</span>
+            <h2 className="text-4xl sm:text-5xl font-light mt-4">All Kinds of Connection</h2>
+          </div>
+
+          {/* Connection type selector */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {connectionTypes.map((type, i) => (
+              <button
+                key={type.id}
+                onClick={() => setActiveConnection(i)}
+                className={`
+                  px-6 py-3 rounded-full text-sm font-medium transition-all duration-300
+                  ${activeConnection === i 
+                    ? 'bg-white text-stone-900' 
+                    : 'bg-stone-900 text-stone-400 hover:bg-stone-800 hover:text-white'}
+                `}
+              >
+                <span className="mr-2">{type.icon}</span>
+                {type.title}
+              </button>
+            ))}
+          </div>
+
+          {/* Active connection display */}
+          <div className="relative">
+            {connectionTypes.map((type, i) => (
+              <div
+                key={type.id}
+                className={`
+                  transition-all duration-500
+                  ${activeConnection === i 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-4 absolute inset-0 pointer-events-none'}
+                `}
+              >
+                <div className={`
+                  p-12 rounded-3xl bg-gradient-to-br ${type.gradient}
+                  relative overflow-hidden
+                `}>
+                  {/* Background pattern */}
+                  <div 
+                    className="absolute inset-0 opacity-10"
+                    style={{
+                      backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                      backgroundSize: '32px 32px'
+                    }} 
+                  />
+                  
+                  <div className="relative max-w-2xl">
+                    <span className="text-6xl mb-6 block">{type.icon}</span>
+                    <h3 className="text-4xl font-light mb-2">{type.title}</h3>
+                    <p className="text-xl text-white/80 mb-6">{type.subtitle}</p>
+                    <p className="text-lg text-white/70 leading-relaxed">{type.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CYRAiNO Feature */}
+      <section className="py-32 px-6 bg-stone-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <span className="text-sm uppercase tracking-widest text-amber-400">Your AI Companion</span>
+              <h2 className="text-4xl sm:text-5xl font-light mt-4 mb-6">Meet CYRAiNO</h2>
+              <p className="text-xl text-stone-400 leading-relaxed mb-8">
+                Named for the poet who spoke love on behalf of others, your CYRAiNO learns who you are—your values, your humor, your non-negotiables—and advocates for you in conversations with other agents.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  'Understands context, not just keywords',
+                  'Finds compatibility through conversation',
+                  'Explains why connections matter',
+                  'Respects your boundaries always'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-stone-300">
+                    <span className="text-rose-400 mt-1">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* CYRAiNO visual */}
+            <div className="relative">
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-stone-800 to-stone-900 
+                            border border-stone-700 flex items-center justify-center relative overflow-hidden">
+                {/* Ambient glow */}
+                <div className="absolute inset-0">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                                w-64 h-64 bg-rose-500/20 rounded-full blur-[80px]" />
+                </div>
+                
+                {/* CYRAiNO representation */}
+                <div className="relative text-center">
+                  <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-rose-400 to-amber-400 
+                                flex items-center justify-center text-6xl mb-6 shadow-2xl shadow-rose-500/30 relative overflow-hidden">
+                    <Image 
+                      src="/cyraino.png" 
+                      alt="CYRAiNO" 
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-2xl font-light text-white">CYRAiNO</p>
+                  <p className="text-stone-500 mt-1">Your connection advocate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-32 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-light mb-6">
+            Ready to find
+            <span className="block text-rose-400">your people?</span>
+          </h2>
+          <p className="text-xl text-stone-400 max-w-2xl mx-auto mb-12">
+            Whether you&apos;re seeking friendship, community, collaboration, or something more—let your CYRAiNO discover connections that actually matter.
+          </p>
+          <button 
             onClick={() => setShowAuth(true)}
-            className="text-lg px-8 py-4"
+            className="group px-10 py-5 bg-gradient-to-r from-rose-500 to-amber-500 
+                     text-white rounded-full text-lg font-medium 
+                     hover:from-rose-400 hover:to-amber-400 
+                     transition-all duration-300 shadow-2xl shadow-rose-500/25
+                     flex items-center gap-3 mx-auto"
           >
             Create Your CYRAiNO
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </button>
         </div>
-      </div>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-slate-400">
-            <p>© 2025 DAiTE. Helping humans embrace.</p>
+      <footer className="py-12 px-6 border-t border-stone-900">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🌸</span>
+            <span className="font-light">DAiTE</span>
+            <span className="text-stone-600 ml-2">Helping humans embrace.</span>
           </div>
+          <div className="flex items-center gap-8 text-sm text-stone-500">
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">Contact</a>
+          </div>
+          <p className="text-sm text-stone-600">© 2025 DAiTE</p>
         </div>
       </footer>
     </div>
   )
 }
-
