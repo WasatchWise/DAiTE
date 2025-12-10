@@ -30,6 +30,7 @@ function RecentMatches({ userId }: { userId?: string }) {
     }
 
     const loadMatches = async () => {
+      if (!supabase || !userId) return
       try {
         const { data, error } = await supabase
           .from('matches')
@@ -136,6 +137,7 @@ export default function DashboardPage() {
     }
 
     const loadDashboardData = async () => {
+      if (!supabase) return
       try {
         // Get current user
         const { data: { user: authUser }, error: userError } = await supabase.auth.getUser()
