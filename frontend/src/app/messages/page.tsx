@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
@@ -37,7 +37,7 @@ interface Message {
   is_read: boolean
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const client = useSupabaseClient()
@@ -116,11 +116,6 @@ export default function MessagesPage() {
                   .eq('is_read', false)
               ])
 
-              // Find matching conversation if matchId provided
-              if (matchId && conv.match_id === matchId) {
-                setSelectedConversation(conv.id)
-              }
-
               return {
                 id: conv.id,
                 match_id: conv.match_id,
@@ -139,9 +134,15 @@ export default function MessagesPage() {
 
           setConversations(conversationsWithDetails)
           
-          // Auto-select first conversation if none selected and matchId not provided
-          if (!selectedConversation && conversationsWithDetails.length > 0 && !matchId) {
-            setSelectedConversation(conversationsWithDetails[0].id)
+          // Find matching conversation if matchId provided
+          if (matchId) {
+            const matchingConv = conversationsWithDetails.find(c => c.match_id === matchId)
+            if (matchingConv) {
+              setSelectedConversation(matchingConv.id)
+            }
+          } else if (conversationsWithDetails.length > 0) {
+            // Auto-select first conversation if none selected and matchId not provided
+            setSelectedConversation(prev => prev || conversationsWithDetails[0].id)
           }
         }
       } catch (error) {
@@ -152,6 +153,7 @@ export default function MessagesPage() {
     }
 
     loadMessagesData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client, router, searchParams])
 
   useEffect(() => {
@@ -459,6 +461,21 @@ export default function MessagesPage() {
         </div>
       </div>
     </ProtectedRoute>
+  )
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading messages...</p>
+        </div>
+      </div>
+    }>
+      <MessagesContent />
+    </Suspense>
   )
 }
 
