@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
@@ -62,6 +62,7 @@ const dateIdeas = [
 
 export default function DatesPage() {
   const router = useRouter()
+  const client = useSupabaseClient()
   const [dates, setDates] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -69,13 +70,13 @@ export default function DatesPage() {
   const [selectedDateForPlanning, setSelectedDateForPlanning] = useState<any>(null)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadDates = async () => {
       try {
         setLoading(true)
         
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           router.push('/')
           return
@@ -83,7 +84,7 @@ export default function DatesPage() {
         setCurrentUserId(user.id)
 
         // Fetch planned dates
-        const { data: datesData, error } = await supabase
+        const { data: datesData, error } = await client
           .from('planned_dates')
           .select(`
             id,
@@ -122,7 +123,7 @@ export default function DatesPage() {
                 ? date.other_user_id 
                 : date.planned_by_user_id
 
-              const { data: otherUser } = await supabase
+              const { data: otherUser } = await client
                 .from('users')
                 .select('pseudonym')
                 .eq('id', otherUserId)
@@ -146,7 +147,7 @@ export default function DatesPage() {
     }
 
     loadDates()
-  }, [router])
+  }, [client, router])
 
   return (
     <ProtectedRoute>

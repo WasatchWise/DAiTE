@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
@@ -55,6 +55,7 @@ interface UserBadge {
 
 export default function ChallengesPage() {
   const router = useRouter()
+  const client = useSupabaseClient()
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [userBadges, setUserBadges] = useState<UserBadge[]>([])
   const [tokenBalance, setTokenBalance] = useState(0)
@@ -63,14 +64,13 @@ export default function ChallengesPage() {
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadData = async () => {
-      if (!supabase) return
       try {
         setLoading(true)
         
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           router.push('/')
           return
@@ -78,7 +78,7 @@ export default function ChallengesPage() {
         setCurrentUserId(user.id)
 
         // Load challenges
-        const { data: challengesData } = await supabase
+        const { data: challengesData } = await client
           .from('challenges')
           .select(`
             id,
@@ -107,7 +107,7 @@ export default function ChallengesPage() {
         }
 
         // Load user badges
-        const { data: badgesData } = await supabase
+        const { data: badgesData } = await client
           .from('user_badges')
           .select(`
             id,
@@ -133,7 +133,7 @@ export default function ChallengesPage() {
         }
 
         // Load token balance
-        const { data: balance } = await supabase
+        const { data: balance } = await client
           .from('token_balances')
           .select('balance')
           .eq('user_id', user.id)
@@ -148,7 +148,7 @@ export default function ChallengesPage() {
     }
 
     loadData()
-  }, [router])
+  }, [client, router])
 
   const handleStartChallenge = async (challenge: Challenge) => {
     if (tokenBalance < challenge.token_cost) {
@@ -156,10 +156,10 @@ export default function ChallengesPage() {
       return
     }
 
-    if (!supabase || !currentUserId) return
+    if (!client || !currentUserId) return
 
     // Deduct tokens
-    const { error: tokenError } = await supabase
+    const { error: tokenError } = await client
       .from('token_balances')
       .update({ balance: tokenBalance - challenge.token_cost })
       .eq('user_id', currentUserId)
@@ -170,7 +170,7 @@ export default function ChallengesPage() {
     }
 
     // Record transaction
-    await supabase
+    await client
       .from('token_transactions')
       .insert({
         user_id: currentUserId,

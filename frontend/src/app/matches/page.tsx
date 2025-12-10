@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -33,6 +33,7 @@ interface Match {
 
 export default function MatchesPage() {
   const router = useRouter()
+  const client = useSupabaseClient()
   const [selectedMatch, setSelectedMatch] = useState<string | null>(null)
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
@@ -41,14 +42,14 @@ export default function MatchesPage() {
   const [selectedMatchForDeepDive, setSelectedMatchForDeepDive] = useState<Match | null>(null)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadMatches = async () => {
       try {
         setLoading(true)
         
         // Get current user
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           router.push('/')
           return
@@ -56,7 +57,7 @@ export default function MatchesPage() {
         setCurrentUserId(user.id)
 
         // Fetch matches
-        const { data: matchesData, error } = await supabase
+        const { data: matchesData, error } = await client
           .from('matches')
           .select(`
             id,
@@ -83,20 +84,22 @@ export default function MatchesPage() {
               const otherUserId = match.user_1_id === user.id ? match.user_2_id : match.user_1_id
               
               const [userResult, agentResult] = await Promise.all([
-                supabase
+                client
                   .from('users')
                   .select('pseudonym')
                   .eq('id', otherUserId)
                   .single(),
-                supabase
+                client
                   .from('cyraino_agents')
                   .select('name')
                   .eq('user_id', otherUserId)
                   .single()
               ])
 
-              const compatibility = match.discoveries?.compatibility_highlights?.score || 
-                                 match.discoveries?.compatibility_highlights?.compatibilityScore || 85
+              // Handle discoveries as array (Supabase relationship queries return arrays)
+              const discovery = Array.isArray(match.discoveries) ? match.discoveries[0] : match.discoveries
+              const compatibility = (discovery as any)?.compatibility_highlights?.score || 
+                                 (discovery as any)?.compatibility_highlights?.compatibilityScore || 85
 
               return {
                 id: match.id,
@@ -108,9 +111,9 @@ export default function MatchesPage() {
                   pseudonym: userResult.data?.pseudonym || 'Anonymous',
                   agentName: agentResult.data?.name || 'CYRAiNO'
                 },
-                discovery: match.discoveries || {},
+                discovery: discovery || {},
                 compatibility: typeof compatibility === 'number' ? compatibility : 85,
-                sharedValues: match.discoveries?.compatibility_highlights?.sharedValues || []
+                sharedValues: (discovery as any)?.compatibility_highlights?.sharedValues || []
               }
             })
           )
@@ -125,7 +128,7 @@ export default function MatchesPage() {
     }
 
     loadMatches()
-  }, [router])
+  }, [client, router])
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString)

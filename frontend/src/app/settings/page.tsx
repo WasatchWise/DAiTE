@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
@@ -24,6 +24,7 @@ export default function SettingsPage() {
   ]
 
   const router = useRouter()
+  const client = useSupabaseClient()
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -33,24 +34,24 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadUserData = async () => {
       try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
+        const { data: { user: authUser } } = await client.auth.getUser()
         if (!authUser) {
           router.push('/')
           return
         }
         setUser(authUser)
 
-        const { data: userData } = await supabase
+        const { data: userData } = await client
           .from('users')
           .select('*')
           .eq('id', authUser.id)
           .single()
 
-        const { data: profileData } = await supabase
+        const { data: profileData } = await client
           .from('user_profiles')
           .select('*')
           .eq('user_id', authUser.id)
@@ -66,7 +67,7 @@ export default function SettingsPage() {
     }
 
     loadUserData()
-  }, [router])
+  }, [client, router])
 
   return (
     <ProtectedRoute>
@@ -175,7 +176,7 @@ export default function SettingsPage() {
                   <Button 
                     variant="primary"
                     onClick={async () => {
-                      if (!supabase || !user) return
+                      if (!client || !user) return
                       setSaving(true)
                       try {
                         // Update or create profile
@@ -186,18 +187,18 @@ export default function SettingsPage() {
                         }
 
                         if (profile?.id) {
-                          await supabase
+                          await client
                             .from('user_profiles')
                             .update(profileData)
                             .eq('user_id', user.id)
                         } else {
-                          await supabase
+                          await client
                             .from('user_profiles')
                             .insert(profileData)
                         }
 
                         // Reload profile
-                        const { data: updatedProfile } = await supabase
+                        const { data: updatedProfile } = await client
                           .from('user_profiles')
                           .select('*')
                           .eq('user_id', user.id)

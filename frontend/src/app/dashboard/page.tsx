@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
@@ -20,18 +20,18 @@ import {
 } from 'lucide-react'
 
 function RecentMatches({ userId }: { userId?: string }) {
+  const client = useSupabaseClient()
   const [matches, setMatches] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!supabase || !userId) {
+    if (!client || !userId) {
       setLoading(false)
       return
     }
 
     const loadMatches = async () => {
-      if (!supabase || !userId) return
-      const client = supabase // Store in const for TypeScript
+      if (!client || !userId) return
       try {
         const { data, error } = await client
           .from('matches')
@@ -81,7 +81,7 @@ function RecentMatches({ userId }: { userId?: string }) {
     }
 
     loadMatches()
-  }, [userId])
+  }, [client, userId])
 
   if (loading) {
     return <div className="text-slate-400 text-sm">Loading...</div>
@@ -132,15 +132,16 @@ export default function DashboardPage() {
     compatibility: 0
   })
 
+  const client = useSupabaseClient()
+
   useEffect(() => {
-    if (!supabase) {
+    if (!client) {
       window.location.href = '/?error=supabase_not_configured'
       return
     }
 
     const loadDashboardData = async () => {
-      if (!supabase) return
-      const client = supabase // Store in const for TypeScript
+      if (!client) return
       try {
         // Get current user
         const { data: { user: authUser }, error: userError } = await client.auth.getUser()
@@ -220,7 +221,7 @@ export default function DashboardPage() {
     }
 
     loadDashboardData()
-  }, [])
+  }, [client])
 
   const quickActions = [
     { 

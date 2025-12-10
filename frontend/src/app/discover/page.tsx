@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -36,6 +36,7 @@ interface DiscoverProfile {
 
 export default function DiscoverPage() {
   const router = useRouter()
+  const client = useSupabaseClient()
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,14 +48,14 @@ export default function DiscoverPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadDiscoverData = async () => {
       try {
         setLoading(true)
         
         // Get current user
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           router.push('/')
           return
@@ -62,7 +63,7 @@ export default function DiscoverPage() {
         setCurrentUserId(user.id)
 
         // Get user's existing matches to exclude them
-        const { data: existingMatches } = await supabase
+        const { data: existingMatches } = await client
           .from('matches')
           .select('user_1_id, user_2_id')
           .or(`user_1_id.eq.${user.id},user_2_id.eq.${user.id}`)
@@ -75,7 +76,7 @@ export default function DiscoverPage() {
         })
 
         // Fetch other users with profiles, agents, and badges
-        const { data: usersData } = await supabase
+        const { data: usersData } = await client
           .from('users')
           .select(`
             id,
@@ -153,7 +154,7 @@ export default function DiscoverPage() {
     }
 
     loadDiscoverData()
-  }, [router])
+  }, [client, router])
 
   const [showVibeCheckModal, setShowVibeCheckModal] = useState(false)
   const [selectedProfileForVibeCheck, setSelectedProfileForVibeCheck] = useState<string | null>(null)

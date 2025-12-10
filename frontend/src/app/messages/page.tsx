@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Navigation } from '@/components/Navigation'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -40,6 +40,7 @@ interface Message {
 export default function MessagesPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const client = useSupabaseClient()
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [messages, setMessages] = useState<Message[]>([])
@@ -52,13 +53,13 @@ export default function MessagesPage() {
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!supabase) return
+    if (!client) return
 
     const loadMessagesData = async () => {
       try {
         setLoading(true)
         
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           router.push('/')
           return
@@ -69,7 +70,7 @@ export default function MessagesPage() {
         const matchId = searchParams?.get('match')
         
         // Load conversations
-        const { data: conversationsData, error: convError } = await supabase
+        const { data: conversationsData, error: convError } = await client
           .from('conversations')
           .select(`
             id,
@@ -95,19 +96,19 @@ export default function MessagesPage() {
               const otherUserId = conv.user_1_id === user.id ? conv.user_2_id : conv.user_1_id
               
               const [userResult, lastMessageResult, unreadResult] = await Promise.all([
-                supabase
+                client
                   .from('users')
                   .select('id, pseudonym')
                   .eq('id', otherUserId)
                   .single(),
-                supabase
+                client
                   .from('messages')
                   .select('content, created_at, sender_user_id')
                   .eq('conversation_id', conv.id)
                   .order('created_at', { ascending: false })
                   .limit(1)
                   .single(),
-                supabase
+                client
                   .from('messages')
                   .select('id', { count: 'exact', head: true })
                   .eq('conversation_id', conv.id)
@@ -151,13 +152,13 @@ export default function MessagesPage() {
     }
 
     loadMessagesData()
-  }, [router, searchParams])
+  }, [client, router, searchParams])
 
   useEffect(() => {
-    if (!selectedConversation || !currentUserId || !supabase) return
+    if (!selectedConversation || !currentUserId || !client) return
 
     const loadMessages = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('messages')
         .select('*')
         .eq('conversation_id', selectedConversation)
@@ -177,7 +178,7 @@ export default function MessagesPage() {
         )
         
         if (unreadMessages.length > 0) {
-          await supabase
+          await client
             .from('messages')
             .update({ is_read: true, read_at: new Date().toISOString() })
             .in('id', unreadMessages.map(m => m.id))
@@ -188,7 +189,7 @@ export default function MessagesPage() {
     loadMessages()
 
     // Subscribe to new messages
-    const channel = supabase
+    const channel = client
       .channel(`conversation:${selectedConversation}`)
       .on('postgres_changes', {
         event: 'INSERT',
@@ -202,9 +203,9 @@ export default function MessagesPage() {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      client.removeChannel(channel)
     }
-  }, [selectedConversation, currentUserId])
+  }, [client, selectedConversation, currentUserId])
 
   useEffect(() => {
     scrollToBottom()
@@ -215,7 +216,7 @@ export default function MessagesPage() {
   }
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !selectedConversation || !currentUserId || !supabase) return
+    if (!message.trim() || !selectedConversation || !currentUserId || !client) return
 
     const conversation = conversations.find(c => c.id === selectedConversation)
     if (!conversation) return
@@ -226,7 +227,7 @@ export default function MessagesPage() {
         ? conversation.user_2_id 
         : conversation.user_1_id
 
-      const { error } = await supabase
+      const { error } = await client
         .from('messages')
         .insert({
           conversation_id: selectedConversation,
@@ -239,7 +240,7 @@ export default function MessagesPage() {
       if (error) throw error
 
       // Update conversation last_message_at
-      await supabase
+      await client
         .from('conversations')
         .update({ 
           last_message_at: new Date().toISOString(),
