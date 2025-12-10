@@ -31,8 +31,9 @@ function RecentMatches({ userId }: { userId?: string }) {
 
     const loadMatches = async () => {
       if (!supabase || !userId) return
+      const client = supabase // Store in const for TypeScript
       try {
-        const { data, error } = await supabase
+        const { data, error } = await client
           .from('matches')
           .select(`
             id,
@@ -55,7 +56,7 @@ function RecentMatches({ userId }: { userId?: string }) {
         if (data) {
           const matchPromises = data.map(async (match) => {
             const otherUserId = match.user_1_id === userId ? match.user_2_id : match.user_1_id
-            const { data: otherUser } = await supabase
+            const { data: otherUser } = await client
               .from('users')
               .select('pseudonym')
               .eq('id', otherUserId)
@@ -138,9 +139,10 @@ export default function DashboardPage() {
 
     const loadDashboardData = async () => {
       if (!supabase) return
+      const client = supabase // Store in const for TypeScript
       try {
         // Get current user
-        const { data: { user: authUser }, error: userError } = await supabase.auth.getUser()
+        const { data: { user: authUser }, error: userError } = await client.auth.getUser()
         if (userError) throw userError
         if (!authUser) {
           window.location.href = '/?error=not_authenticated'
@@ -149,14 +151,14 @@ export default function DashboardPage() {
         setUser(authUser)
 
         // Fetch user record
-        const { data: userRecord } = await supabase
+        const { data: userRecord } = await client
           .from('users')
           .select('*')
           .eq('id', authUser.id)
           .single()
 
         // Fetch CYRAiNO agent
-        const { data: agentData } = await supabase
+        const { data: agentData } = await client
           .from('cyraino_agents')
           .select('*')
           .eq('user_id', authUser.id)
@@ -169,21 +171,21 @@ export default function DashboardPage() {
         // Fetch stats
         const [matchesResult, messagesResult, datesResult] = await Promise.all([
           // Count matches
-          supabase
+          client
             .from('matches')
             .select('id', { count: 'exact', head: true })
             .or(`user_1_id.eq.${authUser.id},user_2_id.eq.${authUser.id}`)
             .eq('is_active', true),
           
           // Count unread messages
-          supabase
+          client
             .from('messages')
             .select('id', { count: 'exact', head: true })
             .eq('recipient_user_id', authUser.id)
             .eq('is_read', false),
           
           // Count upcoming dates
-          supabase
+          client
             .from('planned_dates')
             .select('id', { count: 'exact', head: true })
             .or(`planned_by_user_id.eq.${authUser.id},other_user_id.eq.${authUser.id}`)
@@ -192,7 +194,7 @@ export default function DashboardPage() {
         ])
 
         // Calculate average compatibility from matches
-        const { data: matchesData } = await supabase
+        const { data: matchesData } = await client
           .from('matches')
           .select('discovery_id')
           .or(`user_1_id.eq.${authUser.id},user_2_id.eq.${authUser.id}`)
