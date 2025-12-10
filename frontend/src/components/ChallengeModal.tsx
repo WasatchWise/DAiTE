@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -28,6 +28,7 @@ interface ChallengeModalProps {
 }
 
 export function ChallengeModal({ challenge, isOpen, onClose, onComplete }: ChallengeModalProps) {
+  const client = useSupabaseClient()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -55,11 +56,11 @@ export function ChallengeModal({ challenge, isOpen, onClose, onComplete }: Chall
   }
 
   const handleSubmit = async () => {
-    if (!supabase) return
+    if (!client) return
 
     setSubmitting(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await client.auth.getUser()
       if (!user) return
 
       // Calculate score
@@ -77,7 +78,7 @@ export function ChallengeModal({ challenge, isOpen, onClose, onComplete }: Chall
       const percentageScore = Math.round((totalScore / maxScore) * 100)
 
       // Call the complete_challenge function
-      const { data, error } = await supabase.rpc('complete_challenge', {
+      const { data, error } = await client.rpc('complete_challenge', {
         p_user_id: user.id,
         p_challenge_id: challenge.id,
         p_score: percentageScore,

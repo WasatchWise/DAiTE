@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { requestConciergeService, processConciergeService, type ConciergeService } from '@/services/concierge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -47,6 +47,7 @@ export function ConciergeServiceModal({
   contextData,
   inputData 
 }: ConciergeServiceModalProps) {
+  const client = useSupabaseClient()
   const [service, setService] = useState<ConciergeService | null>(null)
   const [loading, setLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
@@ -56,14 +57,14 @@ export function ConciergeServiceModal({
   const [userInput, setUserInput] = useState(inputData || {})
 
   useEffect(() => {
-    if (!isOpen || !supabase) return
+    if (!isOpen || !client) return
 
     const loadService = async () => {
       try {
         setLoading(true)
         
         // Get service details
-        const { data: services } = await supabase
+        const { data: services } = await client
           .from('concierge_services')
           .select('*')
           .eq('service_type', serviceType)
@@ -75,9 +76,9 @@ export function ConciergeServiceModal({
         }
 
         // Get token balance
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (user) {
-          const { data: balance } = await supabase
+          const { data: balance } = await client
             .from('token_balances')
             .select('balance')
             .eq('user_id', user.id)
@@ -93,7 +94,7 @@ export function ConciergeServiceModal({
     }
 
     loadService()
-  }, [isOpen, serviceType])
+  }, [client, isOpen, serviceType])
 
   const handleRequestService = async () => {
     if (!service) return

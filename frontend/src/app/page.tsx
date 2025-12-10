@@ -73,7 +73,7 @@ function HomeContent() {
     }, 2500)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [daiteTypes.length])
 
   const currentType = daiteTypes[currentIndex]
 

@@ -2,22 +2,23 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const client = useSupabaseClient()
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
 
   useEffect(() => {
-    if (!supabase) {
+    if (!client) {
       router.push('/?error=supabase_not_configured')
       return
     }
 
     const checkAuth = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser()
+        const { data: { user }, error } = await client.auth.getUser()
         
         if (error || !user) {
           router.push('/?error=not_authenticated')
@@ -36,7 +37,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     checkAuth()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) {
         router.push('/?error=session_expired')
       }
@@ -45,7 +46,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router])
+  }, [client, router])
 
   if (loading) {
     return (

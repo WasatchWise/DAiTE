@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 import { checkVibeCheckEligibility, runVibeCheck, type VibeCheckEligibility } from '@/services/vibeCheck'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -16,6 +16,7 @@ interface VibeCheckModalProps {
 }
 
 export function VibeCheckModal({ isOpen, onClose, onComplete }: VibeCheckModalProps) {
+  const client = useSupabaseClient()
   const [eligibility, setEligibility] = useState<VibeCheckEligibility | null>(null)
   const [loading, setLoading] = useState(false)
   const [checking, setChecking] = useState(true)
@@ -27,12 +28,12 @@ export function VibeCheckModal({ isOpen, onClose, onComplete }: VibeCheckModalPr
   const [userConnectionTypes, setUserConnectionTypes] = useState<string[]>([])
 
   useEffect(() => {
-    if (!isOpen || !supabase) return
+    if (!isOpen || !client) return
 
     const loadEligibility = async () => {
       setChecking(true)
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user } } = await client.auth.getUser()
         if (!user) {
           onClose()
           return
@@ -40,7 +41,7 @@ export function VibeCheckModal({ isOpen, onClose, onComplete }: VibeCheckModalPr
         setUserId(user.id)
 
         // Get user's connection types
-        const { data: profile } = await supabase
+        const { data: profile } = await client
           .from('user_profiles')
           .select('looking_for')
           .eq('user_id', user.id)
@@ -64,7 +65,7 @@ export function VibeCheckModal({ isOpen, onClose, onComplete }: VibeCheckModalPr
     }
 
     loadEligibility()
-  }, [isOpen, vibeCheckType, onClose])
+  }, [client, isOpen, vibeCheckType, selectedConnectionType, onClose])
 
   const handleRunVibeCheck = async () => {
     if (!userId || !eligibility?.canRun) return

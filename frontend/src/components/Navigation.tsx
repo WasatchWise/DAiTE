@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Home, Search, Heart, MessageCircle, Calendar, Settings, LogOut } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useSupabaseClient } from '@/hooks/useSupabaseClient'
 
 import { Award } from 'lucide-react'
 
@@ -23,23 +23,24 @@ const navItems = [
 export function Navigation() {
   const pathname = usePathname()
   const router = useRouter()
+  const client = useSupabaseClient()
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    if (supabase) {
-      supabase.auth.getUser().then(({ data: { user } }) => {
+    if (client) {
+      client.auth.getUser().then(({ data: { user } }) => {
         setUser(user)
       })
 
-      supabase.auth.onAuthStateChange((_event, session) => {
+      client.auth.onAuthStateChange((_event, session) => {
         setUser(session?.user ?? null)
       })
     }
-  }, [])
+  }, [client])
 
   const handleLogout = async () => {
-    if (supabase) {
-      await supabase.auth.signOut()
+    if (client) {
+      await client.auth.signOut()
       router.push('/')
       router.refresh()
     }
