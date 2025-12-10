@@ -62,10 +62,11 @@ function RecentMatches({ userId }: { userId?: string }) {
               .eq('id', otherUserId)
               .single()
 
+            const discovery = Array.isArray(match.discoveries) ? match.discoveries[0] : match.discoveries
             return {
               ...match,
               otherUser: otherUser || { pseudonym: 'Unknown' },
-              compatibility: match.discoveries?.compatibility_highlights?.score || 85
+              compatibility: (discovery as any)?.compatibility_highlights?.score || 85
             }
           })
 
