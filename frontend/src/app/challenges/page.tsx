@@ -66,6 +66,7 @@ export default function ChallengesPage() {
     if (!supabase) return
 
     const loadData = async () => {
+      if (!supabase) return
       try {
         setLoading(true)
         
