@@ -303,35 +303,35 @@ export default function MessagesPage() {
                     </div>
                   ) : (
                     conversations.map((conv) => (
-                  <div
-                    key={conv.id}
-                    onClick={() => setSelectedConversation(conv.id)}
-                    className={`
-                      p-4 border-b border-slate-700 cursor-pointer transition-colors
-                      ${selectedConversation === conv.id ? 'bg-purple-600/20' : 'hover:bg-slate-700/30'}
-                    `}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-                          <span className="text-sm font-bold">{conv.pseudonym[0]}</span>
+                      <div
+                        key={conv.id}
+                        onClick={() => setSelectedConversation(conv.id)}
+                        className={`
+                          p-4 border-b border-slate-700 cursor-pointer transition-colors
+                          ${selectedConversation === conv.id ? 'bg-purple-600/20' : 'hover:bg-slate-700/30'}
+                        `}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+                              <span className="text-sm font-bold">{conv.otherUser.pseudonym[0]?.toUpperCase() || '?'}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium">{conv.otherUser.pseudonym}</p>
+                              <p className="text-xs text-slate-400">{formatTime(conv.last_message_at)}</p>
+                            </div>
+                          </div>
+                          {conv.unreadCount > 0 && (
+                            <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                              {conv.unreadCount}
+                            </span>
+                          )}
                         </div>
-                        <div>
-                          <p className="font-medium">{conv.pseudonym}</p>
-                          <p className="text-xs text-slate-400">{conv.timestamp}</p>
-                        </div>
+                        <p className="text-sm text-slate-400 line-clamp-2 ml-13">
+                          {conv.lastMessage?.content || 'No messages yet'}
+                        </p>
                       </div>
-                      {conv.unread > 0 && (
-                        <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                          {conv.unread}
-                        </span>
-                      )}
-                    </div>
-                      <p className="text-sm text-slate-400 line-clamp-2 ml-13">
-                        {conv.lastMessage?.content || 'No messages yet'}
-                      </p>
-                    </div>
-                    ))}
+                    ))
                   )}
                 </div>
               </Card>
