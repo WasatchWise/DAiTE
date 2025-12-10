@@ -155,7 +155,7 @@ export function ConnectionTypesSelector({
         </p>
         {maxSelections && (
           <p className="text-xs text-slate-500 mb-3">
-            Select up to {maxSelections} (you've selected {selected.length})
+            Select up to {maxSelections} (you&apos;ve selected {selected.length})
           </p>
         )}
       </div>

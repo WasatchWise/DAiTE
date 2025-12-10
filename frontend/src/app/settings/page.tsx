@@ -168,7 +168,7 @@ export default function SettingsPage() {
                       onChange={setConnectionTypes}
                     />
                     <p className="text-xs text-slate-500 mt-2">
-                      Select all the types of connections you're open to. You can have romantic relationships AND friends AND music partners—all at the same time!
+                      Select all the types of connections you&apos;re open to. You can have romantic relationships AND friends AND music partners—all at the same time!
                     </p>
                   </div>
                   
